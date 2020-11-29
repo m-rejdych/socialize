@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
 import { createConnection } from 'typeorm';
@@ -12,6 +13,7 @@ const main = async (): Promise<void> => {
   const schema = await buildSchema({ resolvers });
 
   const app = express();
+  app.use(cors());
 
   const server = new ApolloServer({ schema });
   server.applyMiddleware({ app });
