@@ -3,6 +3,8 @@ import { Box } from '@material-ui/core';
 import FirstSection from './FirstSection';
 import SecondSection from './SecondSection';
 import ThirdSection from './ThirdSection';
+import FourthSection from './FourthSection';
+import FifthSection from './FifthSection';
 
 const Landing: React.FC = () => {
   return (
@@ -10,6 +12,8 @@ const Landing: React.FC = () => {
       <FirstSection />
       <SecondSection />
       <ThirdSection />
+      <FourthSection />
+      <FifthSection />
     </Box>
   );
 };
