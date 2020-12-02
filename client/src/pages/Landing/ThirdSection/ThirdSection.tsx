@@ -1,8 +1,13 @@
+import { useRef, useEffect } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Container, makeStyles, Box, Typography } from '@material-ui/core';
 
 import { ReactComponent as DividerSmallSecond } from '../../../assets/Divider-small-2.svg';
 import { ReactComponent as DividerSmallThird } from '../../../assets/Divider-small-3.svg';
 import { ReactComponent as ChatSvg } from '../../../assets/Chat.svg';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -38,10 +43,35 @@ const useStyles = makeStyles((theme) => ({
 
 const ThirdSection: React.FC = () => {
   const classes = useStyles();
+  const watermarkRef = useRef<HTMLSpanElement | null>(null);
+  const textRef = useRef<HTMLDivElement | null>(null);
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const watermark = watermarkRef.current;
+    const text = textRef.current;
+    const svg = svgRef.current;
+    const container = containerRef.current as HTMLDivElement;
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: container,
+        start: 'top bottom',
+        end: 'top top',
+        scrub: 1,
+      },
+    });
+    tl.set([watermark, text, svg], { autoAlpha: 0, ease: 'power1.out' });
+
+    tl.fromTo(watermark, { x: '-=100' }, { autoAlpha: 1, x: '+=100' })
+      .fromTo(text, { y: '+=100' }, { autoAlpha: 1, y: '-=100' })
+      .fromTo(svg, { x: '-=100' }, { autoAlpha: 1, x: '+=100' });
+  }, []);
 
   return (
     <Box position="relative" height="100vh" zIndex={-1}>
-      <Container className={classes.container}>
+      <Container ref={containerRef} className={classes.container}>
         <Box
           position="absolute"
           display="flex"
@@ -51,16 +81,20 @@ const ThirdSection: React.FC = () => {
           left={0}
           bottom={120}
         >
-          <ChatSvg />
-          <Box pt={3}>
-            <Typography variant="h3" className={classes.title}>
-              Chat with your friends
-            </Typography>
-            <Typography variant="h5">So you are always in touch</Typography>
-          </Box>
+          <ChatSvg ref={svgRef} />
+          <div ref={textRef}>
+            <Box pt={3}>
+              <Typography variant="h3" className={classes.title}>
+                Chat with your friends
+              </Typography>
+              <Typography variant="h5">So you are always in touch</Typography>
+            </Box>
+          </div>
         </Box>
       </Container>
-      <Typography className={classes.watermark}>Chat</Typography>
+      <Typography ref={watermarkRef} className={classes.watermark}>
+        Chat
+      </Typography>
       <Box clone position="absolute" left={0} top={-1} zIndex={-1}>
         <DividerSmallSecond />
       </Box>

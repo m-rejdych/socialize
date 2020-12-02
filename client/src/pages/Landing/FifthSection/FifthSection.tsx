@@ -1,3 +1,6 @@
+import { useRef, useEffect } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Box, Typography, makeStyles, Button } from '@material-ui/core';
 import classNames from 'classnames';
 
@@ -5,6 +8,8 @@ import { ReactComponent as DividerSmallSecond } from '../../../assets/Divider-sm
 import { ReactComponent as DividerSmallThird } from '../../../assets/Divider-small-3.svg';
 import { ReactComponent as LineSvg } from '../../../assets/Line.svg';
 import { ReactComponent as DotsSvg } from '../../../assets/Dots.svg';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -21,6 +26,30 @@ const useStyles = makeStyles((theme) => ({
 
 const FifthSection: React.FC = () => {
   const classes = useStyles();
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const container = containerRef.current as HTMLDivElement;
+
+    gsap.fromTo(
+      container,
+      {
+        autoAlpha: 0,
+        y: '+=100',
+      },
+      {
+        autoAlpha: 1,
+        y: '-=100',
+        ease: 'power1.out',
+        scrollTrigger: {
+          trigger: container,
+          start: 'top bottom',
+          end: 'top top',
+          scrub: 1,
+        },
+      },
+    );
+  }, []);
 
   return (
     <Box
@@ -30,34 +59,38 @@ const FifthSection: React.FC = () => {
       justifyContent="center"
       alignItems="center"
     >
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        flexDirection="column"
-      >
-        <Typography className={classNames(classes.title, classes.marginBottom)}>
-          Join now
-        </Typography>
-        <Box clone className={classes.marginBottomBig}>
-          <LineSvg />
-        </Box>
-        <Button
-          size="large"
-          variant="contained"
-          color="secondary"
-          className={classes.marginBottomBig}
+      <div ref={containerRef}>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexDirection="column"
         >
-          CREATE FREE ACCOUNT
-        </Button>
-        <Typography variant="h5" className={classes.marginBottomBig}>
-          or
-        </Typography>
-        <Button size="large" className={classes.marginBottomBig}>
-          LOGIN
-        </Button>
-        <DotsSvg />
-      </Box>
+          <Typography
+            className={classNames(classes.title, classes.marginBottom)}
+          >
+            Join now
+          </Typography>
+          <Box clone className={classes.marginBottomBig}>
+            <LineSvg />
+          </Box>
+          <Button
+            size="large"
+            variant="contained"
+            color="secondary"
+            className={classes.marginBottomBig}
+          >
+            CREATE FREE ACCOUNT
+          </Button>
+          <Typography variant="h5" className={classes.marginBottomBig}>
+            or
+          </Typography>
+          <Button size="large" className={classes.marginBottomBig}>
+            LOGIN
+          </Button>
+          <DotsSvg />
+        </Box>
+      </div>
       <Box clone position="absolute" top={-1} left={0}>
         <DividerSmallSecond />
       </Box>

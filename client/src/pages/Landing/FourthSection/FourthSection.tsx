@@ -1,8 +1,13 @@
+import { useRef, useEffect } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Container, makeStyles, Box, Typography } from '@material-ui/core';
 
 import { ReactComponent as DividerSmallFirst } from '../../../assets/Divider-small-1.svg';
 import { ReactComponent as DividerSmallFourth } from '../../../assets/Divider-small-4.svg';
 import { ReactComponent as FeedSvg } from '../../../assets/Feed.svg';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -37,11 +42,36 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const FourthSection: React.FC = () => {
+  const watermarkRef = useRef<HTMLSpanElement | null>(null);
+  const textRef = useRef<HTMLDivElement | null>(null);
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const classes = useStyles();
+
+  useEffect(() => {
+    const watermark = watermarkRef.current;
+    const text = textRef.current;
+    const svg = svgRef.current;
+    const container = containerRef.current as HTMLDivElement;
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: container,
+        start: 'top bottom',
+        end: 'top top',
+        scrub: 1,
+      },
+    });
+    tl.set([watermark, text, svg], { autoAlpha: 0, ease: 'power1.out' });
+
+    tl.fromTo(watermark, { x: '-=100' }, { autoAlpha: 1, x: '+=100' })
+      .fromTo(text, { y: '+=100' }, { autoAlpha: 1, y: '-=100' })
+      .fromTo(svg, { x: '+=100' }, { autoAlpha: 1, x: '-=100' });
+  }, []);
 
   return (
     <Box position="relative" height="100vh" zIndex={-1}>
-      <Container className={classes.container}>
+      <Container ref={containerRef} className={classes.container}>
         <Box
           position="absolute"
           display="flex"
@@ -52,16 +82,20 @@ const FourthSection: React.FC = () => {
           bottom={120}
           pb={8}
         >
-          <Box pt={3}>
-            <Typography variant="h3" className={classes.title}>
-              Check your feed
-            </Typography>
-            <Typography variant="h5">To stay updated</Typography>
-          </Box>
-          <FeedSvg />
+          <div ref={textRef}>
+            <Box pt={3}>
+              <Typography variant="h3" className={classes.title}>
+                Check your feed
+              </Typography>
+              <Typography variant="h5">To stay updated</Typography>
+            </Box>
+          </div>
+          <FeedSvg ref={svgRef} />
         </Box>
       </Container>
-      <Typography className={classes.watermark}>Feed</Typography>
+      <Typography ref={watermarkRef} className={classes.watermark}>
+        Feed
+      </Typography>
       <Box clone position="absolute" right={0} top={-1} zIndex={-1}>
         <DividerSmallFourth />
       </Box>

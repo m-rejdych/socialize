@@ -1,4 +1,6 @@
+import { useRef, useEffect } from 'react';
 import classNames from 'classnames';
+import gsap from 'gsap';
 import {
   Box,
   Typography,
@@ -6,12 +8,10 @@ import {
   Button,
   Container,
 } from '@material-ui/core';
+
 import { ReactComponent as DotsSvg } from '../../../assets/Dots.svg';
-
 import { ReactComponent as DividerBigFirst } from '../../../assets/Divider-big-1.svg';
-
 import Woman from '../../../assets/Woman.jpg';
-
 import Man from '../../../assets/Man.jpg';
 
 const useStyles = makeStyles((theme) => ({
@@ -38,11 +38,13 @@ const useStyles = makeStyles((theme) => ({
   img: {
     width: 370,
     height: 550,
+    visibility: 'hidden',
   },
   womanImg: {
     position: 'relative',
     bottom: 144,
     left: 142,
+    zIndex: 1,
   },
   link: {
     cursor: 'pointer',
@@ -50,10 +52,33 @@ const useStyles = makeStyles((theme) => ({
       textDecoration: 'underline',
     },
   },
+  hidden: {
+    visibility: 'hidden',
+  },
 }));
 
 const Landing: React.FC = () => {
   const classes = useStyles();
+  const manRef = useRef<HTMLImageElement | null>(null);
+  const womanRef = useRef<HTMLImageElement | null>(null);
+  const mainRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const man = manRef.current;
+    const woman = womanRef.current;
+    const main = mainRef.current;
+
+    const tl = gsap.timeline();
+    tl.set([man, woman, main], {
+      autoAlpha: 0,
+      duration: 0.5,
+      ease: 'power1.out',
+    });
+
+    tl.fromTo(man, { y: '-=200' }, { autoAlpha: 1, y: '+=200' })
+      .fromTo(woman, { y: '+=200' }, { autoAlpha: 1, y: '-=200' })
+      .fromTo(main, { x: '-=50' }, { autoAlpha: 1, x: '+=50' });
+  }, []);
 
   return (
     <Box height="100vh" position="relative">
@@ -85,7 +110,7 @@ const Landing: React.FC = () => {
           alignItems="center"
           className={classes.transformYCenter}
         >
-          <Box>
+          <div className={classes.hidden} ref={mainRef}>
             <Typography className={classes.title}>SOCIALIZE</Typography>
             <Typography variant="h4">One place</Typography>
             <Typography variant="h4">for you and your friends</Typography>
@@ -97,14 +122,15 @@ const Landing: React.FC = () => {
             >
               REGISTER
             </Button>
-          </Box>
+          </div>
           <Box display="flex" mb={-17}>
             <img
+              ref={womanRef}
               className={classNames(classes.img, classes.womanImg)}
               src={Woman}
               alt="woman"
             />
-            <img className={classes.img} src={Man} alt="Man" />
+            <img ref={manRef} className={classes.img} src={Man} alt="Man" />
           </Box>
         </Box>
       </Container>
