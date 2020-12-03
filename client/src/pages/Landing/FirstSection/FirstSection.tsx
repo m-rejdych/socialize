@@ -8,6 +8,7 @@ import {
   Button,
   Container,
 } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 
 import { ReactComponent as DotsSvg } from '../../../assets/Dots.svg';
 import { ReactComponent as DividerBigFirst } from '../../../assets/Divider-big-1.svg';
@@ -62,6 +63,7 @@ const Landing: React.FC = () => {
   const manRef = useRef<HTMLImageElement | null>(null);
   const womanRef = useRef<HTMLImageElement | null>(null);
   const mainRef = useRef<HTMLDivElement | null>(null);
+  const history = useHistory();
 
   useEffect(() => {
     const man = manRef.current;
@@ -80,6 +82,10 @@ const Landing: React.FC = () => {
       .fromTo(main, { x: '-=50' }, { autoAlpha: 1, x: '+=50' });
   }, []);
 
+  const goToPage = (path: string): void => {
+    history.push(path);
+  };
+
   return (
     <Box height="100vh" position="relative">
       <Container className={classes.container}>
@@ -94,10 +100,15 @@ const Landing: React.FC = () => {
             <Typography
               className={classNames(classes.marginRight, classes.link)}
               variant="h5"
+              onClick={(): void => goToPage('/register')}
             >
               Register
             </Typography>
-            <Typography variant="h5" className={classes.link}>
+            <Typography
+              variant="h5"
+              className={classes.link}
+              onClick={(): void => goToPage('/login')}
+            >
               Login
             </Typography>
           </Box>
