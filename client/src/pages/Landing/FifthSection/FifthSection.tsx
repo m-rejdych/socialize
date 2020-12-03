@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Box, Typography, makeStyles, Button } from '@material-ui/core';
@@ -26,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
 
 const FifthSection: React.FC = () => {
   const classes = useStyles();
+  const history = useHistory();
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -50,6 +52,10 @@ const FifthSection: React.FC = () => {
       },
     );
   }, []);
+
+  const goToPage = (path: string): void => {
+    history.push(path);
+  };
 
   return (
     <Box
@@ -79,13 +85,18 @@ const FifthSection: React.FC = () => {
             variant="contained"
             color="secondary"
             className={classes.marginBottomBig}
+            onClick={(): void => goToPage('/register')}
           >
             CREATE FREE ACCOUNT
           </Button>
           <Typography variant="h5" className={classes.marginBottomBig}>
             or
           </Typography>
-          <Button size="large" className={classes.marginBottomBig}>
+          <Button
+            size="large"
+            className={classes.marginBottomBig}
+            onClick={(): void => goToPage('/login')}
+          >
             LOGIN
           </Button>
           <DotsSvg />
