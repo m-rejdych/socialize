@@ -130,6 +130,7 @@ const Landing: React.FC = () => {
               size="large"
               color="secondary"
               className={classes.marginTopBig}
+              onClick={(): void => goToPage('/register')}
             >
               REGISTER
             </Button>

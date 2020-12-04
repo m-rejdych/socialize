@@ -1,4 +1,4 @@
-import { Resolver, Query, Arg, Authorized, Ctx } from 'type-graphql';
+import { Resolver, Query, Arg, Authorized, Ctx, ID } from 'type-graphql';
 
 import UserEntity from '../../../../entity/User';
 import Context from '../../../../types/Context';
@@ -8,7 +8,7 @@ class User {
   @Authorized()
   @Query(() => UserEntity)
   async user(
-    @Arg('userId', { nullable: true }) id: string,
+    @Arg('id', () => ID, { nullable: true }) id: string,
     @Ctx() ctx: Context,
   ): Promise<UserEntity> {
     if (!id) {

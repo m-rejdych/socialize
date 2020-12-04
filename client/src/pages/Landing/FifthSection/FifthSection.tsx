@@ -102,10 +102,10 @@ const FifthSection: React.FC = () => {
           <DotsSvg />
         </Box>
       </div>
-      <Box clone position="absolute" top={-1} left={0}>
+      <Box clone position="absolute" top={-1} left={0} zIndex={-1}>
         <DividerSmallSecond />
       </Box>
-      <Box clone position="absolute" bottom={0} right={0}>
+      <Box clone position="absolute" bottom={0} right={0} zIndex={-1}>
         <DividerSmallThird />
       </Box>
     </Box>

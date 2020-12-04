@@ -15,12 +15,25 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
-  testQuery: Scalars['String'];
+  user: User;
+};
+
+
+export type QueryUserArgs = {
+  id?: Maybe<Scalars['ID']>;
+};
+
+export type User = {
+  __typename?: 'User';
+  id: Scalars['ID'];
+  email: Scalars['String'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  fullName: Scalars['String'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  testMutation: Scalars['String'];
   register: RegisterResponse;
   login: RegisterResponse;
 };
@@ -39,15 +52,6 @@ export type RegisterResponse = {
   __typename?: 'RegisterResponse';
   user: User;
   token: Scalars['String'];
-};
-
-export type User = {
-  __typename?: 'User';
-  id: Scalars['ID'];
-  email: Scalars['String'];
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
-  fullName: Scalars['String'];
 };
 
 export type RegisterInput = {
@@ -93,6 +97,19 @@ export type RegisterMutation = (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'fullName'>
     ) }
+  ) }
+);
+
+export type UserQueryVariables = Exact<{
+  id?: Maybe<Scalars['ID']>;
+}>;
+
+
+export type UserQuery = (
+  { __typename?: 'Query' }
+  & { user: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'fullName'>
   ) }
 );
 
@@ -175,3 +192,40 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const UserDocument = gql`
+    query User($id: ID) {
+  user(id: $id) {
+    id
+    email
+    firstName
+    lastName
+    fullName
+  }
+}
+    `;
+
+/**
+ * __useUserQuery__
+ *
+ * To run a query within a React component, call `useUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useUserQuery(baseOptions?: Apollo.QueryHookOptions<UserQuery, UserQueryVariables>) {
+        return Apollo.useQuery<UserQuery, UserQueryVariables>(UserDocument, baseOptions);
+      }
+export function useUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserQuery, UserQueryVariables>) {
+          return Apollo.useLazyQuery<UserQuery, UserQueryVariables>(UserDocument, baseOptions);
+        }
+export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
+export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
+export type UserQueryResult = Apollo.QueryResult<UserQuery, UserQueryVariables>;
