@@ -122,6 +122,7 @@ const AuthForm: React.FC = () => {
       if (response.data) {
         const { user, token } = response.data.login;
         localStorage.setItem('token', token);
+        localStorage.setItem('expiresIn', (Date.now() + 3600000).toString());
         userVar(user);
         console.log(user, token);
       }
@@ -132,6 +133,7 @@ const AuthForm: React.FC = () => {
       if (response.data) {
         const { user, token } = response.data.register;
         localStorage.setItem('token', token);
+        localStorage.setItem('expiresIn', (Date.now() + 3600000).toString());
         userVar(user);
         console.log(user, token);
       }

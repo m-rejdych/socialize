@@ -4,7 +4,9 @@ import {
   Box,
   Typography,
   makeStyles,
+  IconButton,
 } from '@material-ui/core';
+import { ArrowBack } from '@material-ui/icons';
 import { useLocation, useHistory } from 'react-router-dom';
 
 import AuthForm from '../../components/AuthForm';
@@ -47,7 +49,14 @@ const Auth: React.FC = () => {
       position="relative"
     >
       <Card elevation={3} className={classes.card}>
-        <CardHeader title={isLoggingIn ? 'Login' : 'Register'} />
+        <CardHeader
+          title={isLoggingIn ? 'Login' : 'Register'}
+          action={
+            <IconButton onClick={(): void => history.push('/')}>
+              <ArrowBack />
+            </IconButton>
+          }
+        />
         <AuthForm />
         <Typography
           className={classes.link}
@@ -59,10 +68,10 @@ const Auth: React.FC = () => {
             : 'Already have an account? Login!'}
         </Typography>
       </Card>
-      <Box clone position="absolute" top={0} left={0} zIndex={-1}>
+      <Box clone position="absolute" top={-1} left={0} zIndex={-1}>
         <DividerSecond />
       </Box>
-      <Box clone position="absolute" bottom={0} right={0} zIndex={-1}>
+      <Box clone position="absolute" bottom={-1} right={0} zIndex={-1}>
         <DividerThird />
       </Box>
     </Box>
