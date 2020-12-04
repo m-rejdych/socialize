@@ -3,21 +3,34 @@ import {
   CardActions,
   Button,
   makeStyles,
+  CircularProgress,
 } from '@material-ui/core';
 import { useLocation } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 
 import InputElement from '../InputElement';
+import {
+  useRegisterMutation,
+  useLoginMutation,
+  RegisterInput,
+  LoginInput,
+} from '../../generated/graphql';
+import { userVar } from '../../graphql/reactiveVariables/user';
 
 const useStyles = makeStyles((theme) => ({
   cardContent: {
     width: 500,
+  },
+  buttonMinWidth: {
+    minWidth: 97,
   },
 }));
 
 const AuthForm: React.FC = () => {
   const classes = useStyles();
   const { pathname } = useLocation();
+  const [login, { loading: loginLoading }] = useLoginMutation();
+  const [register, { loading: registerLoading }] = useRegisterMutation();
 
   const isLoggingIn = pathname === '/login';
 
@@ -99,11 +112,37 @@ const AuthForm: React.FC = () => {
     },
   ];
 
+  const handleSubmit = async (
+    values: LoginInput | RegisterInput,
+  ): Promise<void> => {
+    if (isLoggingIn) {
+      const response = await login({
+        variables: { data: values as LoginInput },
+      });
+      if (response.data) {
+        const { user, token } = response.data.login;
+        localStorage.setItem('token', token);
+        userVar(user);
+        console.log(user, token);
+      }
+    } else {
+      const response = await register({
+        variables: { data: values as RegisterInput },
+      });
+      if (response.data) {
+        const { user, token } = response.data.register;
+        localStorage.setItem('token', token);
+        userVar(user);
+        console.log(user, token);
+      }
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
       enableReinitialize
-      onSubmit={() => {}}
+      onSubmit={handleSubmit}
     >
       {({ isValid, dirty }) => (
         <Form>
@@ -116,11 +155,19 @@ const AuthForm: React.FC = () => {
           </CardContent>
           <CardActions>
             <Button
+              type="submit"
               disabled={!isValid || !dirty}
               color="secondary"
               variant="contained"
+              className={classes.buttonMinWidth}
             >
-              {isLoggingIn ? 'LOGIN' : 'REGISTER'}
+              {registerLoading || loginLoading ? (
+                <CircularProgress size={24} color="primary" />
+              ) : isLoggingIn ? (
+                'LOGIN'
+              ) : (
+                'REGISTER'
+              )}
             </Button>
           </CardActions>
         </Form>

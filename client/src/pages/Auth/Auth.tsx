@@ -8,6 +8,8 @@ import {
 import { useLocation, useHistory } from 'react-router-dom';
 
 import AuthForm from '../../components/AuthForm';
+import { ReactComponent as DividerSecond } from '../../assets/Divider-small-2.svg';
+import { ReactComponent as DividerThird } from '../../assets/Divider-small-3.svg';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -42,6 +44,7 @@ const Auth: React.FC = () => {
       display="flex"
       alignItems="center"
       justifyContent="center"
+      position="relative"
     >
       <Card elevation={3} className={classes.card}>
         <CardHeader title={isLoggingIn ? 'Login' : 'Register'} />
@@ -56,6 +59,12 @@ const Auth: React.FC = () => {
             : 'Already have an account? Login!'}
         </Typography>
       </Card>
+      <Box clone position="absolute" top={0} left={0} zIndex={-1}>
+        <DividerSecond />
+      </Box>
+      <Box clone position="absolute" bottom={0} right={0} zIndex={-1}>
+        <DividerThird />
+      </Box>
     </Box>
   );
 };

@@ -24,6 +24,7 @@ const InputElement: React.FC<Props> = ({ label, ...props }) => {
   return (
     <TextField
       {...field}
+      type={props.type}
       variant="outlined"
       fullWidth
       label={label}
