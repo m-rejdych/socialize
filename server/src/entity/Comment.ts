@@ -9,7 +9,7 @@ import {
 import { ObjectType, ID, Field, Int } from 'type-graphql';
 
 import Post from './Post';
-import User from './User';
+import Profile from './Profile';
 
 @Entity()
 @ObjectType()
@@ -22,12 +22,12 @@ class Comment extends BaseEntity {
   @Field()
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.comments, {
+  @ManyToOne(() => Profile, (profile) => profile.comments, {
     cascade: true,
     onDelete: 'CASCADE',
   })
-  @Field(() => User)
-  author: User;
+  @Field(() => Profile)
+  author: Profile;
 
   @ManyToOne(() => Post, (post) => post.comments, {
     cascade: true,
@@ -40,11 +40,11 @@ class Comment extends BaseEntity {
   @Field()
   content: string;
 
-  @Column()
+  @Column({ default: 0 })
   @Field(() => Int)
   likes: number;
 
-  @Column()
+  @Column({ default: 0 })
   @Field(() => Int)
   dislikes: number;
 }

@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Arg, Authorized, Ctx } from 'type-graphql';
 
 import Post from '../../../../entity/Post';
-import User from '../../../../entity/User';
+import Profile from '../../../../entity/Profile';
 import Context from '../../../../types/Context';
 
 @Resolver()
@@ -14,13 +14,12 @@ class CreatePost {
   ): Promise<Post> {
     const { userId } = ctx;
 
-    const user = await User.findOne(userId);
+    const profile = await Profile.findOne({ where: { user: userId } });
+    if (!profile) throw new Error('Profile not found!');
 
     const post = Post.create({
       content,
-      likes: 0,
-      dislikes: 0,
-      author: user,
+      author: profile,
     });
     await post.save();
 

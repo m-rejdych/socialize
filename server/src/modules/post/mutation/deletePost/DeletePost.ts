@@ -9,6 +9,7 @@ import {
 } from 'type-graphql';
 
 import Post from '../../../../entity/Post';
+import Profile from '../../../../entity/Profile';
 import Context from '../../../../types/Context';
 
 @Resolver()
@@ -25,7 +26,11 @@ class DeletePost {
       loadRelationIds: { relations: ['author'] },
     });
     if (!post) throw new Error('Post not found!');
-    if ((post.author as unknown) !== userId) throw new ForbiddenError();
+
+    const profile = await Profile.findOne({ where: { user: userId } });
+    if (!profile) throw new Error('Profile not found!');
+
+    if ((post.author as unknown) !== profile.id) throw new ForbiddenError();
 
     await post.remove();
 

@@ -3,6 +3,7 @@ import { hash } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 
 import User from '../../../../entity/User';
+import Profile from '../../../../entity/Profile';
 import RegisterInput from './RegisterInput';
 import RegisterResponse from './RegisterResponse';
 import { TOKEN_SECRET } from '../../../../config';
@@ -26,6 +27,8 @@ class Register {
       firstName,
       lastName,
     });
+    const profile = Profile.create();
+    user.profile = profile;
     await user.save();
 
     const token = sign({ userId: user.id }, TOKEN_SECRET as string, {

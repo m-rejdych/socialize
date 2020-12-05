@@ -3,12 +3,11 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BaseEntity,
-  OneToMany,
+  OneToOne,
 } from 'typeorm';
 import { ObjectType, Field, ID, Root } from 'type-graphql';
 
-import Post from './Post';
-import Comment from './Comment';
+import Profile from './Profile';
 
 @Entity()
 @ObjectType()
@@ -41,16 +40,11 @@ class User extends BaseEntity {
   @Field()
   isAdmin: boolean;
 
-  @OneToMany(() => Post, (post) => post.author, {
+  @OneToOne(() => Profile, (profile) => profile.user, {
     cascade: ['insert', 'update'],
   })
-  @Field(() => [Post], { nullable: true })
-  posts: Post[];
-
-  @OneToMany(() => Comment, (comment) => comment.author, {
-    cascade: ['insert', 'update'],
-  })
-  comments: Comment[];
+  @Field(() => Profile)
+  profile: Profile;
 }
 
 export default User;
