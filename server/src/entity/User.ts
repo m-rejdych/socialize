@@ -37,12 +37,19 @@ class User extends BaseEntity {
     return `${root.firstName} ${root.lastName}`;
   }
 
-  @OneToMany(() => Post, (post) => post.author)
-  @Field(() => [Post])
+  @Column({ default: false })
+  @Field()
+  isAdmin: boolean;
+
+  @OneToMany(() => Post, (post) => post.author, {
+    cascade: ['insert', 'update'],
+  })
+  @Field(() => [Post], { nullable: true })
   posts: Post[];
 
-  @OneToMany(() => Comment, (comment) => comment.author)
-  @Field(() => [Comment])
+  @OneToMany(() => Comment, (comment) => comment.author, {
+    cascade: ['insert', 'update'],
+  })
   comments: Comment[];
 }
 

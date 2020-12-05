@@ -22,11 +22,17 @@ class Comment extends BaseEntity {
   @Field()
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.comments)
+  @ManyToOne(() => User, (user) => user.comments, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @Field(() => User)
   author: User;
 
-  @ManyToOne(() => Post, (post) => post.comments)
+  @ManyToOne(() => Post, (post) => post.comments, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @Field(() => Post)
   post: Post;
 

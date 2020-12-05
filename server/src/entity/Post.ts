@@ -23,7 +23,10 @@ class Post extends BaseEntity {
   @Field()
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.posts)
+  @ManyToOne(() => User, (user) => user.posts, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @Field(() => User)
   author: User;
 
@@ -31,8 +34,10 @@ class Post extends BaseEntity {
   @Field()
   content: string;
 
-  @OneToMany(() => Comment, (comment) => comment.post)
-  @Field(() => [Comment])
+  @OneToMany(() => Comment, (comment) => comment.post, {
+    cascade: ['insert', 'update'],
+  })
+  @Field(() => [Comment], { nullable: true })
   comments: Comment[];
 
   @Column()
