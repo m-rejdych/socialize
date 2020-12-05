@@ -13,7 +13,7 @@ class User {
   ): Promise<UserEntity> {
     if (!id) {
       const { userId } = ctx;
-      const user = await UserEntity.findOne(userId);
+      const user = await UserEntity.findOne(userId, { relations: ['posts'] });
 
       if (!user) throw new Error('User not found!');
 
