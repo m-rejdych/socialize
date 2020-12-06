@@ -14,7 +14,12 @@ class User {
     if (!id) {
       const { userId } = ctx;
       const user = await UserEntity.findOne(userId, {
-        relations: ['profile', 'profile.posts'],
+        relations: [
+          'profile',
+          'profile.posts',
+          'profile.likedPosts',
+          'profile.dislikedPosts',
+        ],
       });
 
       if (!user) throw new Error('User not found!');

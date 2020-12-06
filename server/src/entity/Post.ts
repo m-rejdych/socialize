@@ -6,6 +6,8 @@ import {
   BaseEntity,
   ManyToOne,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { ObjectType, Field, Int, ID } from 'type-graphql';
 
@@ -47,6 +49,22 @@ class Post extends BaseEntity {
   @Column({ default: 0 })
   @Field(() => Int)
   dislikes: number;
+
+  @ManyToMany(() => Profile, (profile) => profile.likedPosts, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinTable()
+  @Field(() => [Profile], { nullable: true })
+  likedBy: Profile[];
+
+  @ManyToMany(() => Profile, (profile) => profile.dislikedPosts, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinTable()
+  @Field(() => [Profile], { nullable: true })
+  dislikedBy: Profile[];
 }
 
 export default Post;

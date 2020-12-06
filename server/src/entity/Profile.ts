@@ -4,6 +4,7 @@ import {
   BaseEntity,
   OneToMany,
   OneToOne,
+  ManyToMany,
   JoinColumn,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
@@ -37,6 +38,18 @@ class Profile extends BaseEntity {
     cascade: ['insert', 'update'],
   })
   comments: Comment[];
+
+  @ManyToMany(() => Post, (post) => post.likedBy, {
+    cascade: ['insert', 'update'],
+  })
+  @Field(() => [Post], { nullable: true })
+  likedPosts: Post[];
+
+  @ManyToMany(() => Post, (post) => post.dislikedBy, {
+    cascade: ['insert', 'update'],
+  })
+  @Field(() => [Post], { nullable: true })
+  dislikedPosts: Post[];
 }
 
 export default Profile;
