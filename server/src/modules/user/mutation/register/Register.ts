@@ -33,6 +33,7 @@ class Register {
 
     const token = sign({ userId: user.id }, TOKEN_SECRET as string, {
       algorithm: 'HS256',
+      expiresIn: '1h',
     });
 
     return {
