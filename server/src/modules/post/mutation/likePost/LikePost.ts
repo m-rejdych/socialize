@@ -14,10 +14,9 @@ class LikePost {
     @Arg('data') { id, isLiked }: LikePostInput,
     @Ctx() ctx: Context,
   ): Promise<PostMutationResponse> {
-    const { userId } = ctx;
+    const { profileId } = ctx;
 
-    const profile = await Profile.findOne({
-      where: { user: userId },
+    const profile = await Profile.findOne(profileId, {
       relations: ['likedPosts', 'dislikedPosts'],
     });
     if (!profile) throw new Error('Profile not found');

@@ -20,14 +20,14 @@ class DeletePost {
     @Arg('id', () => ID) id: string,
     @Ctx() ctx: Context,
   ): Promise<string> {
-    const { userId } = ctx;
+    const { profileId } = ctx;
 
     const post = await Post.findOne(id, {
       loadRelationIds: { relations: ['author'] },
     });
     if (!post) throw new Error('Post not found!');
 
-    const profile = await Profile.findOne({ where: { user: userId } });
+    const profile = await Profile.findOne(profileId);
     if (!profile) throw new Error('Profile not found!');
 
     if ((post.author as unknown) !== profile.id) throw new ForbiddenError();

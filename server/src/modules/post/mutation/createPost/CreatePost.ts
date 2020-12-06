@@ -13,9 +13,9 @@ class CreatePost {
     @Arg('content') content: string,
     @Ctx() ctx: Context,
   ): Promise<PostMutationResponse> {
-    const { userId } = ctx;
+    const { profileId } = ctx;
 
-    const profile = await Profile.findOne({ where: { user: userId } });
+    const profile = await Profile.findOne(profileId);
     if (!profile) throw new Error('Profile not found!');
 
     const post = Post.create({

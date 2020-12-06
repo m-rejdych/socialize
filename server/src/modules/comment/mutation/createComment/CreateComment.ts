@@ -15,9 +15,9 @@ class CreateComment {
     @Arg('data') { postId, content }: CreateCommentInput,
     @Ctx() ctx: Context,
   ): Promise<CommentMutationResponse> {
-    const { userId } = ctx;
+    const { profileId } = ctx;
 
-    const profile = await Profile.findOne({ where: { user: userId } });
+    const profile = await Profile.findOne(profileId);
     if (!profile) throw new Error('Profile not found!');
 
     const post = await Post.findOne(postId);
