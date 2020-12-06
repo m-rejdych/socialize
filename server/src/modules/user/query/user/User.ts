@@ -16,6 +16,7 @@ class User {
       const user = await UserEntity.findOne(userId, {
         relations: [
           'profile',
+          'profile.comments',
           'profile.posts',
           'profile.likedPosts',
           'profile.dislikedPosts',

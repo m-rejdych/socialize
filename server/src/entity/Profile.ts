@@ -37,6 +37,7 @@ class Profile extends BaseEntity {
   @OneToMany(() => Comment, (comment) => comment.author, {
     cascade: ['insert', 'update'],
   })
+  @Field(() => [Comment], { nullable: true })
   comments: Comment[];
 
   @ManyToMany(() => Post, (post) => post.likedBy, {

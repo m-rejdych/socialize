@@ -9,6 +9,7 @@ import Post from './post/query/post';
 import Posts from './post/query/posts';
 import CreateComment from './comment/mutation/createComment';
 import DeleteComment from './comment/mutation/deleteComment';
+import LikeComment from './comment/mutation/likeComment';
 
 const resolvers = [
   Register,
@@ -22,6 +23,7 @@ const resolvers = [
   Posts,
   CreateComment,
   DeleteComment,
+  LikeComment,
 ] as const;
 
 export default resolvers;

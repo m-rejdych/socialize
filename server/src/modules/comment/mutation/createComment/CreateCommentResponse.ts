@@ -5,7 +5,7 @@ import Comment from '../../../../entity/Comment';
 import Profile from '../../../../entity/Profile';
 
 @ObjectType()
-class CommentMutationResponse {
+class CreateCommentResponse {
   @Field()
   comment: Comment;
 
@@ -16,4 +16,4 @@ class CommentMutationResponse {
   profile: Profile;
 }
 
-export default CommentMutationResponse;
+export default CreateCommentResponse;

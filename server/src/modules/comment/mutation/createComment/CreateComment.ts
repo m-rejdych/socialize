@@ -4,17 +4,17 @@ import Comment from '../../../../entity/Comment';
 import Post from '../../../../entity/Post';
 import Profile from '../../../../entity/Profile';
 import Context from '../../../../types/Context';
-import CommentMutationResponse from '../commentMutationResponse';
+import CreateCommentResponse from './CreateCommentResponse';
 import CreateCommentInput from './CreateCommentInput';
 
 @Resolver()
 class CreateComment {
   @Authorized()
-  @Mutation(() => CommentMutationResponse)
+  @Mutation(() => CreateCommentResponse)
   async createComment(
     @Arg('data') { postId, content }: CreateCommentInput,
     @Ctx() ctx: Context,
-  ): Promise<CommentMutationResponse> {
+  ): Promise<CreateCommentResponse> {
     const { profileId } = ctx;
 
     const profile = await Profile.findOne(profileId);
