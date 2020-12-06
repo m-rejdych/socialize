@@ -28,7 +28,10 @@ const main = async (): Promise<void> => {
 
   const server = new ApolloServer({
     schema,
-    context: ({ req }) => ({ userId: (req as ExtendedRequest).user?.userId }),
+    context: ({ req }) => ({
+      userId: (req as ExtendedRequest).user?.userId,
+      profileId: (req as ExtendedRequest).user?.profileId,
+    }),
   });
   server.applyMiddleware({ app, cors: false });
 

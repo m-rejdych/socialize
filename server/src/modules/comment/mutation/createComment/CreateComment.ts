@@ -28,7 +28,7 @@ class CreateComment {
       content,
       author: profile,
     });
-    comment.save();
+    await comment.save();
 
     return {
       comment,

@@ -31,10 +31,14 @@ class Register {
     user.profile = profile;
     await user.save();
 
-    const token = sign({ userId: user.id }, TOKEN_SECRET as string, {
-      algorithm: 'HS256',
-      expiresIn: '1h',
-    });
+    const token = sign(
+      { userId: user.id, profileId: profile.id },
+      TOKEN_SECRET as string,
+      {
+        algorithm: 'HS256',
+        expiresIn: '1h',
+      },
+    );
 
     return {
       user,

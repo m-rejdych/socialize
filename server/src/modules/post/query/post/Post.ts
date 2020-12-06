@@ -15,6 +15,9 @@ class Post {
         'dislikedBy.user',
         'author',
         'author.user',
+        'comments',
+        'comments.author',
+        'comments.author.user',
       ],
     });
     if (!post) throw new Error('Post not found!');
