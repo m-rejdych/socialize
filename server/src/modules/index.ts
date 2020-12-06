@@ -6,6 +6,7 @@ import DeletePost from './post/mutation/deletePost';
 import UpdatePostContent from './post/mutation/updatePostContent';
 import LikePost from './post/mutation/likePost';
 import Post from './post/query/post';
+import Posts from './post/query/posts';
 import CreateComment from './comment/mutation/createComment';
 
 const resolvers = [
@@ -17,6 +18,7 @@ const resolvers = [
   UpdatePostContent,
   LikePost,
   Post,
+  Posts,
   CreateComment,
 ] as const;
 
