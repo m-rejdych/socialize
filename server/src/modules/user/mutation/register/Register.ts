@@ -5,7 +5,7 @@ import { sign } from 'jsonwebtoken';
 import User from '../../../../entity/User';
 import Profile from '../../../../entity/Profile';
 import RegisterInput from './RegisterInput';
-import RegisterResponse from './RegisterResponse';
+import RegisterResponse from '../userMutationResponse';
 import { TOKEN_SECRET } from '../../../../config';
 
 @Resolver()

@@ -3,7 +3,7 @@ import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 
 import User from '../../../../entity/User';
-import LoginResponse from '../register/RegisterResponse';
+import LoginResponse from '../userMutationResponse';
 import LoginInput from './LoginInput';
 import { TOKEN_SECRET } from '../../../../config';
 

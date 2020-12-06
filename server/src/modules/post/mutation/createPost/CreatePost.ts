@@ -3,15 +3,16 @@ import { Resolver, Mutation, Arg, Authorized, Ctx } from 'type-graphql';
 import Post from '../../../../entity/Post';
 import Profile from '../../../../entity/Profile';
 import Context from '../../../../types/Context';
+import PostMutationResponse from '../postMutationResponse';
 
 @Resolver()
 class CreatePost {
   @Authorized()
-  @Mutation(() => Post)
+  @Mutation(() => PostMutationResponse)
   async createPost(
     @Arg('content') content: string,
     @Ctx() ctx: Context,
-  ): Promise<Post> {
+  ): Promise<PostMutationResponse> {
     const { userId } = ctx;
 
     const profile = await Profile.findOne({ where: { user: userId } });
@@ -23,7 +24,10 @@ class CreatePost {
     });
     await post.save();
 
-    return post;
+    return {
+      post,
+      profile,
+    };
   }
 }
 

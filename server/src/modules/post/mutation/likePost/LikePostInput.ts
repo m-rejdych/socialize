@@ -1,14 +1,14 @@
-import { InputType, Field } from 'type-graphql';
+import { InputType, Field, ID } from 'type-graphql';
 import { IsBoolean, IsUUID } from 'class-validator';
 
 @InputType()
 class LikePostInput {
-  @Field()
-  @IsUUID()
+  @Field(() => ID)
+  @IsUUID(4, { message: 'Invalid ID!' })
   id: string;
 
   @Field()
-  @IsBoolean()
+  @IsBoolean({ message: 'isLiked must be boolean!' })
   isLiked: boolean;
 }
 

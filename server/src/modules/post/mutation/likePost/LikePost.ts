@@ -4,15 +4,16 @@ import Post from '../../../../entity/Post';
 import Profile from '../../../../entity/Profile';
 import Context from '../../../../types/Context';
 import LikePostInput from './LikePostInput';
+import PostMutationResponse from '../postMutationResponse';
 
 @Resolver()
 class LikePost {
   @Authorized()
-  @Mutation(() => Post)
+  @Mutation(() => PostMutationResponse)
   async likePost(
     @Arg('data') { id, isLiked }: LikePostInput,
     @Ctx() ctx: Context,
-  ): Promise<Post> {
+  ): Promise<PostMutationResponse> {
     const { userId } = ctx;
 
     const profile = await Profile.findOne({
@@ -45,7 +46,10 @@ class LikePost {
     }
     await post.save();
 
-    return post;
+    return {
+      post,
+      profile,
+    };
   }
 }
 

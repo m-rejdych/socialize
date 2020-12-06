@@ -50,6 +50,16 @@ class Profile extends BaseEntity {
   })
   @Field(() => [Post], { nullable: true })
   dislikedPosts: Post[];
+
+  @ManyToMany(() => Comment, (comment) => comment.likedBy, {
+    cascade: ['insert', 'update'],
+  })
+  @Field(() => [Comment], { nullable: true })
+  likedComments: Comment[];
+
+  @ManyToMany(() => Comment, (comment) => comment.dislikedBy)
+  @Field(() => [Comment], { nullable: true })
+  dislikedComments: Comment[];
 }
 
 export default Profile;

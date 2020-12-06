@@ -5,6 +5,8 @@ import {
   CreateDateColumn,
   BaseEntity,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { ObjectType, ID, Field, Int } from 'type-graphql';
 
@@ -36,7 +38,7 @@ class Comment extends BaseEntity {
   @Field(() => Post)
   post: Post;
 
-  @Column()
+  @Column('text')
   @Field()
   content: string;
 
@@ -47,6 +49,22 @@ class Comment extends BaseEntity {
   @Column({ default: 0 })
   @Field(() => Int)
   dislikes: number;
+
+  @ManyToMany(() => Profile, (profile) => profile.likedComments, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinTable()
+  @Field(() => [Profile], { nullable: true })
+  likedBy: Profile[];
+
+  @ManyToMany(() => Profile, (profile) => profile.dislikedComments, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinTable()
+  @Field(() => [Profile], { nullable: true })
+  dislikedBy: Profile[];
 }
 
 export default Comment;

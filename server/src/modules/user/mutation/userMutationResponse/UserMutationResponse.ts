@@ -3,7 +3,7 @@ import { ObjectType, Field } from 'type-graphql';
 import User from '../../../../entity/User';
 
 @ObjectType()
-class RegisterResponse {
+class UserMutationResponse {
   @Field()
   user: User;
 
@@ -11,4 +11,4 @@ class RegisterResponse {
   token: string;
 }
 
-export default RegisterResponse;
+export default UserMutationResponse;

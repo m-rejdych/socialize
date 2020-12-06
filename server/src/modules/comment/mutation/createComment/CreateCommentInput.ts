@@ -1,15 +1,15 @@
 import { InputType, Field, ID } from 'type-graphql';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsUUID, IsNotEmpty } from 'class-validator';
 
 @InputType()
-class UpdatePostContentInput {
+class CreateCommentInput {
   @Field(() => ID)
   @IsUUID(4, { message: 'Invalid ID!' })
-  id: string;
+  postId: string;
 
   @Field()
   @IsNotEmpty({ message: 'Content can not be empty!' })
   content: string;
 }
 
-export default UpdatePostContentInput;
+export default CreateCommentInput;

@@ -11,15 +11,16 @@ import Post from '../../../../entity/Post';
 import Profile from '../../../../entity/Profile';
 import Context from '../../../../types/Context';
 import UpdatePostContentInput from './UpdatePostContentInput';
+import PostMutationResponse from '../postMutationResponse';
 
 @Resolver()
 class UpdatePostContent {
   @Authorized()
-  @Mutation(() => Post)
+  @Mutation(() => PostMutationResponse)
   async updatePostContent(
     @Arg('data') { id, content }: UpdatePostContentInput,
     @Ctx() ctx: Context,
-  ): Promise<Post> {
+  ): Promise<PostMutationResponse> {
     const { userId } = ctx;
 
     const profile = await Profile.findOne({ where: { user: userId } });
@@ -34,7 +35,10 @@ class UpdatePostContent {
     post.content = content;
     await post.save();
 
-    return post;
+    return {
+      post,
+      profile,
+    };
   }
 }
 
