@@ -9,15 +9,19 @@ class Post {
   async post(@Arg('id', () => ID) id: string): Promise<PostEntity> {
     const post = await PostEntity.findOne(id, {
       relations: [
+        'author',
+        'author.user',
         'likedBy',
         'dislikedBy',
         'likedBy.user',
         'dislikedBy.user',
-        'author',
-        'author.user',
         'comments',
         'comments.author',
         'comments.author.user',
+        'comments.likedBy',
+        'comments.dislikedBy',
+        'comments.likedBy.user',
+        'comments.dislikedBy.user',
       ],
     });
     if (!post) throw new Error('Post not found!');

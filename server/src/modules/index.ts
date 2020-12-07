@@ -7,9 +7,13 @@ import UpdatePostContent from './post/mutation/updatePostContent';
 import LikePost from './post/mutation/likePost';
 import Post from './post/query/post';
 import Posts from './post/query/posts';
+import ProfilePosts from './post/query/profilePosts';
 import CreateComment from './comment/mutation/createComment';
 import DeleteComment from './comment/mutation/deleteComment';
 import LikeComment from './comment/mutation/likeComment';
+import Comment from './comment/query/comment';
+import Comments from './comment/query/comments';
+import ProfileComments from './comment/query/profileComments';
 
 const resolvers = [
   Register,
@@ -21,9 +25,13 @@ const resolvers = [
   LikePost,
   Post,
   Posts,
+  ProfilePosts,
   CreateComment,
   DeleteComment,
   LikeComment,
+  Comment,
+  Comments,
+  ProfileComments,
 ] as const;
 
 export default resolvers;
