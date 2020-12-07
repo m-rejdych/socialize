@@ -4,6 +4,22 @@ import Post from '../../../../entity/Post';
 import Profile from '../../../../entity/Profile';
 import Context from '../../../../types/Context';
 
+const relations = [
+  'author',
+  'author.user',
+  'likedBy',
+  'dislikedBy',
+  'likedBy.user',
+  'dislikedBy.user',
+  'comments',
+  'comments.author',
+  'comments.author.user',
+  'comments.likedBy',
+  'comments.dislikedBy',
+  'comments.likedBy.user',
+  'comments.dislikedBy.user',
+];
+
 @Resolver()
 class ProfilePosts {
   @Authorized()
@@ -20,21 +36,7 @@ class ProfilePosts {
     if (!id) {
       const posts = await Post.find({
         where: { author: profileId },
-        relations: [
-          'author',
-          'author.user',
-          'likedBy',
-          'dislikedBy',
-          'likedBy.user',
-          'dislikedBy.user',
-          'comments',
-          'comments.author',
-          'comments.author.user',
-          'comments.likedBy',
-          'comments.dislikedBy',
-          'comments.likedBy.user',
-          'comments.dislikedBy.user',
-        ],
+        relations,
       });
       if (!posts) throw new Error('Posts not found!');
       return posts;
@@ -42,21 +44,7 @@ class ProfilePosts {
 
     const posts = await Post.find({
       where: { author: id },
-      relations: [
-        'author',
-        'author.user',
-        'likedBy',
-        'dislikedBy',
-        'likedBy.user',
-        'dislikedBy.user',
-        'comments',
-        'comments.author',
-        'comments.author.user',
-        'comments.likedBy',
-        'comments.dislikedBy',
-        'comments.likedBy.user',
-        'comments.dislikedBy.user',
-      ],
+      relations,
     });
     if (!posts) throw new Error('Posts not found!');
     return posts;

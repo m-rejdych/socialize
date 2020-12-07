@@ -4,6 +4,15 @@ import Comment from '../../../../entity/Comment';
 import Profile from '../../../../entity/Profile';
 import Context from '../../../../types/Context';
 
+const relations = [
+  'author',
+  'author.user',
+  'likedBy',
+  'dislikedBy',
+  'likedBy.user',
+  'dislikedBy.user',
+];
+
 @Resolver()
 class ProfileComments {
   @Authorized()
@@ -20,14 +29,7 @@ class ProfileComments {
     if (!id) {
       const comments = await Comment.find({
         where: { author: profileId },
-        relations: [
-          'author',
-          'author.user',
-          'likedBy',
-          'dislikedBy',
-          'likedBy.user',
-          'dislikedBy.user',
-        ],
+        relations,
       });
       if (!comments) throw new Error('Comments not found!');
       return comments;
@@ -35,14 +37,7 @@ class ProfileComments {
 
     const comments = await Comment.find({
       where: { author: id },
-      relations: [
-        'author',
-        'author.user',
-        'likedBy',
-        'dislikedBy',
-        'likedBy.user',
-        'dislikedBy.user',
-      ],
+      relations,
     });
     if (!comments) throw new Error('Comments not found!');
     return comments;
