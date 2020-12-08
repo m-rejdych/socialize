@@ -20,6 +20,12 @@ class User {
           'profile.posts',
           'profile.likedPosts',
           'profile.dislikedPosts',
+          'profile.requestedFriendships',
+          'profile.requestedFriendships.addressedTo',
+          'profile.requestedFriendships.addressedTo.user',
+          'profile.receivedFriendships',
+          'profile.receivedFriendships.requestedBy',
+          'profile.receivedFriendships.requestedBy.user',
         ],
       });
 
