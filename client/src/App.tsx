@@ -5,6 +5,7 @@ import { useReactiveVar } from '@apollo/client';
 
 import Landing from './pages/Landing';
 import Auth from './pages/Auth';
+import Home from './pages/Home';
 import { userVar } from './graphql/reactiveVariables/user';
 import { useUserLazyQuery } from './generated/graphql';
 
@@ -27,7 +28,7 @@ const App = () => {
 
   const routes = user ? (
     <>
-      <Route path="/home" />
+      <Route path="/home" component={Home} />
       <Redirect to="/home" />
     </>
   ) : (
