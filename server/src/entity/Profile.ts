@@ -12,6 +12,7 @@ import { ObjectType, Field, ID } from 'type-graphql';
 import Post from './Post';
 import Comment from './Comment';
 import User from './User';
+import Friendship from './Friendship';
 
 @Entity()
 @ObjectType()
@@ -58,9 +59,23 @@ class Profile extends BaseEntity {
   @Field(() => [Comment], { nullable: true })
   likedComments: Comment[];
 
-  @ManyToMany(() => Comment, (comment) => comment.dislikedBy)
+  @ManyToMany(() => Comment, (comment) => comment.dislikedBy, {
+    cascade: ['insert', 'update'],
+  })
   @Field(() => [Comment], { nullable: true })
   dislikedComments: Comment[];
+
+  @OneToMany(() => Friendship, (friendship) => friendship.requestedBy, {
+    cascade: ['insert', 'update'],
+  })
+  @Field(() => [Friendship])
+  requestedFriendships: Friendship[];
+
+  @OneToMany(() => Friendship, (friendship) => friendship.addressedTo, {
+    cascade: ['insert', 'update'],
+  })
+  @Field(() => [Friendship])
+  receivedFriendships: Friendship[];
 }
 
 export default Profile;
