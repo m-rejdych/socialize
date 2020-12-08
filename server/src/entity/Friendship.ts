@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   UpdateDateColumn,
+  BaseEntity,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 
@@ -11,7 +12,7 @@ import Profile from './Profile';
 
 @Entity()
 @ObjectType()
-class Friendship {
+class Friendship extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => ID)
   id: string;

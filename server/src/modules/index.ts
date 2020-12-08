@@ -15,6 +15,7 @@ import Comment from './comment/query/comment';
 import Comments from './comment/query/comments';
 import ProfileComments from './comment/query/profileComments';
 import Profile from './profile/query/profile';
+import CreateFriendship from './friendship/mutation/createFriendship';
 
 const resolvers = [
   Register,
@@ -34,6 +35,7 @@ const resolvers = [
   Comments,
   ProfileComments,
   Profile,
+  CreateFriendship,
 ] as const;
 
 export default resolvers;
