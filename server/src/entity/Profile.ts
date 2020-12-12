@@ -68,13 +68,11 @@ class Profile extends BaseEntity {
   @OneToMany(() => Friendship, (friendship) => friendship.requestedBy, {
     cascade: ['insert', 'update'],
   })
-  @Field(() => [Friendship])
   requestedFriendships: Friendship[];
 
   @OneToMany(() => Friendship, (friendship) => friendship.addressedTo, {
     cascade: ['insert', 'update'],
   })
-  @Field(() => [Friendship])
   receivedFriendships: Friendship[];
 }
 
