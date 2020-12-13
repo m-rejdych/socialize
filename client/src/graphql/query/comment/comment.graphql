@@ -1,5 +1,5 @@
-query Post($id: ID!) {
-  post(id: $id) {
+query Comment($id: ID!) {
+  comment(id: $id) {
     id
     createdAt
     content
@@ -25,12 +25,6 @@ query Post($id: ID!) {
         id
         fullName
       }
-    }
-    comments {
-      id
-      likes
-      dislikes
-      createdAt
     }
   }
 }

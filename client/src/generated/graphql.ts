@@ -255,6 +255,32 @@ export type Friendship = {
   friendsFrom: Scalars['DateTime'];
 };
 
+export type LikeCommentMutationVariables = Exact<{
+  data: LikeCommentInput;
+}>;
+
+
+export type LikeCommentMutation = (
+  { __typename?: 'Mutation' }
+  & { likeComment: (
+    { __typename?: 'LikeCommentResponse' }
+    & { profile: (
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id'>
+    ), comment: (
+      { __typename?: 'Comment' }
+      & Pick<Comment, 'id' | 'likes' | 'dislikes'>
+      & { likedBy?: Maybe<Array<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+      )>>, dislikedBy?: Maybe<Array<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+      )>> }
+    ) }
+  ) }
+);
+
 export type LikePostMutationVariables = Exact<{
   data: LikePostInput;
 }>;
@@ -334,6 +360,41 @@ export type RegisterMutation = (
   ) }
 );
 
+export type CommentQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type CommentQuery = (
+  { __typename?: 'Query' }
+  & { comment: (
+    { __typename?: 'Comment' }
+    & Pick<Comment, 'id' | 'createdAt' | 'content' | 'likes' | 'dislikes'>
+    & { author: (
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'fullName'>
+      ) }
+    ), likedBy?: Maybe<Array<(
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'fullName'>
+      ) }
+    )>>, dislikedBy?: Maybe<Array<(
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'fullName'>
+      ) }
+    )>> }
+  ) }
+);
+
 export type PostQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -367,29 +428,7 @@ export type PostQuery = (
       ) }
     )>>, comments?: Maybe<Array<(
       { __typename?: 'Comment' }
-      & Pick<Comment, 'id'>
-      & { author: (
-        { __typename?: 'Profile' }
-        & Pick<Profile, 'id'>
-        & { user: (
-          { __typename?: 'User' }
-          & Pick<User, 'id' | 'fullName'>
-        ) }
-      ), likedBy?: Maybe<Array<(
-        { __typename?: 'Profile' }
-        & Pick<Profile, 'id'>
-        & { user: (
-          { __typename?: 'User' }
-          & Pick<User, 'id' | 'fullName'>
-        ) }
-      )>>, dislikedBy?: Maybe<Array<(
-        { __typename?: 'Profile' }
-        & Pick<Profile, 'id'>
-        & { user: (
-          { __typename?: 'User' }
-          & Pick<User, 'id' | 'fullName'>
-        ) }
-      )>> }
+      & Pick<Comment, 'id' | 'likes' | 'dislikes' | 'createdAt'>
     )>> }
   ) }
 );
@@ -423,6 +462,51 @@ export type UserQuery = (
 );
 
 
+export const LikeCommentDocument = gql`
+    mutation LikeComment($data: LikeCommentInput!) {
+  likeComment(data: $data) {
+    profile {
+      id
+    }
+    comment {
+      id
+      likes
+      dislikes
+      likedBy {
+        id
+      }
+      dislikedBy {
+        id
+      }
+    }
+  }
+}
+    `;
+export type LikeCommentMutationFn = Apollo.MutationFunction<LikeCommentMutation, LikeCommentMutationVariables>;
+
+/**
+ * __useLikeCommentMutation__
+ *
+ * To run a mutation, you first call `useLikeCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLikeCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [likeCommentMutation, { data, loading, error }] = useLikeCommentMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useLikeCommentMutation(baseOptions?: Apollo.MutationHookOptions<LikeCommentMutation, LikeCommentMutationVariables>) {
+        return Apollo.useMutation<LikeCommentMutation, LikeCommentMutationVariables>(LikeCommentDocument, baseOptions);
+      }
+export type LikeCommentMutationHookResult = ReturnType<typeof useLikeCommentMutation>;
+export type LikeCommentMutationResult = Apollo.MutationResult<LikeCommentMutation>;
+export type LikeCommentMutationOptions = Apollo.BaseMutationOptions<LikeCommentMutation, LikeCommentMutationVariables>;
 export const LikePostDocument = gql`
     mutation LikePost($data: LikePostInput!) {
   likePost(data: $data) {
@@ -561,6 +645,64 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const CommentDocument = gql`
+    query Comment($id: ID!) {
+  comment(id: $id) {
+    id
+    createdAt
+    content
+    likes
+    dislikes
+    author {
+      id
+      user {
+        id
+        fullName
+      }
+    }
+    likedBy {
+      id
+      user {
+        id
+        fullName
+      }
+    }
+    dislikedBy {
+      id
+      user {
+        id
+        fullName
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useCommentQuery__
+ *
+ * To run a query within a React component, call `useCommentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCommentQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCommentQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useCommentQuery(baseOptions: Apollo.QueryHookOptions<CommentQuery, CommentQueryVariables>) {
+        return Apollo.useQuery<CommentQuery, CommentQueryVariables>(CommentDocument, baseOptions);
+      }
+export function useCommentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CommentQuery, CommentQueryVariables>) {
+          return Apollo.useLazyQuery<CommentQuery, CommentQueryVariables>(CommentDocument, baseOptions);
+        }
+export type CommentQueryHookResult = ReturnType<typeof useCommentQuery>;
+export type CommentLazyQueryHookResult = ReturnType<typeof useCommentLazyQuery>;
+export type CommentQueryResult = Apollo.QueryResult<CommentQuery, CommentQueryVariables>;
 export const PostDocument = gql`
     query Post($id: ID!) {
   post(id: $id) {
@@ -592,27 +734,9 @@ export const PostDocument = gql`
     }
     comments {
       id
-      author {
-        id
-        user {
-          id
-          fullName
-        }
-      }
-      likedBy {
-        id
-        user {
-          id
-          fullName
-        }
-      }
-      dislikedBy {
-        id
-        user {
-          id
-          fullName
-        }
-      }
+      likes
+      dislikes
+      createdAt
     }
   }
 }

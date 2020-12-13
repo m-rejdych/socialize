@@ -16,12 +16,6 @@ class Post {
         'likedBy.user',
         'dislikedBy.user',
         'comments',
-        'comments.author',
-        'comments.author.user',
-        'comments.likedBy',
-        'comments.dislikedBy',
-        'comments.likedBy.user',
-        'comments.dislikedBy.user',
       ],
     });
     if (!post) throw new Error('Post not found!');

@@ -1,0 +1,18 @@
+mutation LikeComment($data: LikeCommentInput!) {
+  likeComment(data: $data) {
+    profile {
+      id
+    }
+    comment {
+      id
+      likes
+      dislikes
+      likedBy {
+        id
+      }
+      dislikedBy {
+        id
+      }
+    }
+  }
+}
