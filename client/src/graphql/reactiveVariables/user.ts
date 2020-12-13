@@ -6,6 +6,7 @@ interface User {
   firstName: string;
   lastName: string;
   fullName: string;
+  profile: { id: string };
 }
 
 export const userVar = makeVar<User | null>(null);

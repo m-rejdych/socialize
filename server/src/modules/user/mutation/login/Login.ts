@@ -14,7 +14,7 @@ class Login {
   async login(
     @Arg('data') { email, password }: LoginInput,
   ): Promise<LoginResponse> {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }, { relations: ['profile'] });
     if (!user) throw new Error('Wrong email or password!');
 
     const isValid = await compare(password, user.password);

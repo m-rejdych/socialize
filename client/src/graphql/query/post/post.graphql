@@ -1,0 +1,54 @@
+query Post($id: ID!) {
+  post(id: $id) {
+    id
+    createdAt
+    content
+    likes
+    dislikes
+    author {
+      id
+      user {
+        id
+        fullName
+      }
+    }
+    likedBy {
+      id
+      user {
+        id
+        fullName
+      }
+    }
+    dislikedBy {
+      id
+      user {
+        id
+        fullName
+      }
+    }
+    comments {
+      id
+      author {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+      likedBy {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+      dislikedBy {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+    }
+  }
+}

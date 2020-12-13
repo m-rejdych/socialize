@@ -7,6 +7,9 @@ mutation Register($data: RegisterInput!) {
       firstName
       lastName
       fullName
+      profile {
+        id
+      }
     }
   }
 }

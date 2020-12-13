@@ -1,0 +1,27 @@
+mutation LikePost($data: LikePostInput!) {
+  likePost(data: $data) {
+    post {
+      id
+      likes
+      dislikes
+      likedBy {
+        id
+      }
+      dislikedBy {
+        id
+      }
+    }
+    profile {
+      id
+      posts {
+        id
+        likedBy {
+          id
+        }
+        dislikedBy {
+          id
+        }
+      }
+    }
+  }
+}

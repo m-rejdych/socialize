@@ -1,12 +1,14 @@
-import { Paper, Avatar, TextField, makeStyles } from '@material-ui/core';
+import { Paper, Avatar, TextField, makeStyles, Box } from '@material-ui/core';
 
-import { useUserQuery } from '../../generated/graphql';
+import Post from '../Post';
+import { useUserQuery, useFeedQuery } from '../../generated/graphql';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
     display: 'flex',
     alignItems: 'center',
     padding: theme.spacing(2),
+    marginBottom: theme.spacing(2),
   },
   marginRight: {
     marginRight: theme.spacing(2),
@@ -18,18 +20,24 @@ const useStyles = makeStyles((theme) => ({
 
 const Feed: React.FC = () => {
   const classes = useStyles();
-  const { data } = useUserQuery();
+  const { data: userData } = useUserQuery();
+  const { data: feedData } = useFeedQuery();
 
   return (
-    <Paper className={classes.paper}>
-      <Avatar className={classes.marginRight} />
-      <TextField
-        fullWidth
-        placeholder={`What's new, ${data?.user.firstName || ''}?`}
-        variant="outlined"
-        InputProps={{ className: classes.inputBackground }}
-      />
-    </Paper>
+    <Box>
+      <Paper className={classes.paper}>
+        <Avatar className={classes.marginRight} />
+        <TextField
+          fullWidth
+          placeholder={`What's new, ${userData?.user.firstName || ''}?`}
+          variant="outlined"
+          InputProps={{ className: classes.inputBackground }}
+        />
+      </Paper>
+      {feedData?.feed.map(({ id }) => (
+        <Post id={id} />
+      ))}
+    </Box>
   );
 };
 

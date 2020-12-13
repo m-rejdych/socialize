@@ -1,4 +1,5 @@
 query Feed {
   feed {
     id
+  }
 }

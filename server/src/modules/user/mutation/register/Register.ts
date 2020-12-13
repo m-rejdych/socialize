@@ -14,7 +14,7 @@ class Register {
   async register(
     @Arg('data') { email, password, firstName, lastName }: RegisterInput,
   ): Promise<RegisterResponse> {
-    const foundUser = await User.findOne({ email });
+    const foundUser = await User.findOne({ email }, { relations: ['profile'] });
     if (foundUser) {
       throw new Error('This email is already in use!');
     }

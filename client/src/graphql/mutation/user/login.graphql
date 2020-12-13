@@ -7,6 +7,9 @@ mutation Login($data: LoginInput!) {
       firstName
       lastName
       fullName
+      profile {
+        id
+      }
     }
   }
 }
