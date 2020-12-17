@@ -13,6 +13,15 @@ class Feed {
 
     const profile = await Profile.createQueryBuilder('profile')
       .leftJoinAndSelect('profile.posts', 'profilePosts')
+      .leftJoinAndSelect('profilePosts.author', 'profilePostsAuthor')
+      .leftJoinAndSelect('profilePostsAuthor.user', 'profilePostsAuthorUser')
+      .leftJoinAndSelect('profilePosts.likedBy', 'profilePostsLikedBy')
+      .leftJoinAndSelect('profilePostsLikedBy.user', 'profilePostsLikedByUser')
+      .leftJoinAndSelect('profilePosts.dislikedBy', 'profilePostsDislikedBy')
+      .leftJoinAndSelect(
+        'profilePostsDislikedBy.user',
+        'profilePostsDislikedByUser',
+      )
       .leftJoinAndSelect(
         'profile.requestedFriendships',
         'requestedFriendship',
@@ -27,8 +36,100 @@ class Feed {
       )
       .leftJoinAndSelect('requestedFriendship.addressedTo', 'addressedTo')
       .leftJoinAndSelect('addressedTo.posts', 'addressedToPosts')
+      .leftJoinAndSelect('addressedToPosts.author', 'addressedToPostsAuthor')
+      .leftJoinAndSelect(
+        'addressedToPostsAuthor.user',
+        'addressedToPostsAuthorUser',
+      )
+      .leftJoinAndSelect('addressedToPosts.likedBy', 'addressedToPostsLikedBy')
+      .leftJoinAndSelect(
+        'addressedToPostsLikedBy.user',
+        'addressedToPostsLikedByUser',
+      )
+      .leftJoinAndSelect(
+        'addressedToPosts.dislikedBy',
+        'addressedToPostsDislikedBy',
+      )
+      .leftJoinAndSelect(
+        'addressedToPostsDislikedBy.user',
+        'addressedToPostsDislikedByUser',
+      )
+      .leftJoinAndSelect(
+        'addressedToPosts.comments',
+        'addressedToPostsComments',
+      )
+      .leftJoinAndSelect(
+        'addressedToPostsComments.author',
+        'addressedToPostsCommentsAuthor',
+      )
+      .leftJoinAndSelect(
+        'addressedToPostsCommentsAuthor.user',
+        'addressedToPostsCommentsAuthorUser',
+      )
+      .leftJoinAndSelect(
+        'addressedToPostsComments.likedBy',
+        'addressedToPostsCommentsLikedBy',
+      )
+      .leftJoinAndSelect(
+        'addressedToPostsCommentsLikedBy.user',
+        'addressedToPostsCommentsLikedByUser',
+      )
+      .leftJoinAndSelect(
+        'addressedToPostsComments.dislikedBy',
+        'addressedToPostsCommentsDislikedBy',
+      )
+      .leftJoinAndSelect(
+        'addressedToPostsCommentsDislikedBy.user',
+        'addressedToPostsCommentsDislikedByUser',
+      )
       .leftJoinAndSelect('receivedFriendship.requestedBy', 'requestedBy')
       .leftJoinAndSelect('requestedBy.posts', 'requestedByPosts')
+      .leftJoinAndSelect('requestedByPosts.author', 'requestedByPostsAuthor')
+      .leftJoinAndSelect(
+        'requestedByPostsAuthor.user',
+        'requestedByPostsAuthorUser',
+      )
+      .leftJoinAndSelect('requestedByPosts.likedBy', 'requestedByPostsLikedBy')
+      .leftJoinAndSelect(
+        'requestedByPostsLikedBy.user',
+        'requestedByPostsLikedByUser',
+      )
+      .leftJoinAndSelect(
+        'requestedByPosts.dislikedBy',
+        'requestedByPostsDislikedBy',
+      )
+      .leftJoinAndSelect(
+        'requestedByPostsDislikedBy.user',
+        'requestedByPostsDislikedByUser',
+      )
+      .leftJoinAndSelect(
+        'requestedByPosts.comments',
+        'requestedByPostsComments',
+      )
+      .leftJoinAndSelect(
+        'requestedByPostsComments.author',
+        'requestedByPostsCommentsAuthor',
+      )
+      .leftJoinAndSelect(
+        'requestedByPostsCommentsAuthor.user',
+        'requestedByPostsCommentsAuthorUser',
+      )
+      .leftJoinAndSelect(
+        'requestedByPostsComments.likedBy',
+        'requestedByPostsCommentsLikedBy',
+      )
+      .leftJoinAndSelect(
+        'requestedByPostsCommentsLikedBy.user',
+        'requestedByPostsCommentsLikedByUser',
+      )
+      .leftJoinAndSelect(
+        'requestedByPostsComments.dislikedBy',
+        'requestedByPostsCommentsDislikedBy',
+      )
+      .leftJoinAndSelect(
+        'requestedByPostsCommentsDislikedBy.user',
+        'requestedByPostsCommentsDislikedByUser',
+      )
       .where('profile.id = :profileId', { profileId })
       .getOne();
     if (!profile) throw new Error('Profile not found!');

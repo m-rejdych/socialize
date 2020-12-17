@@ -281,6 +281,51 @@ export type LikeCommentMutation = (
   ) }
 );
 
+export type CreatePostMutationVariables = Exact<{
+  content: Scalars['String'];
+}>;
+
+
+export type CreatePostMutation = (
+  { __typename?: 'Mutation' }
+  & { createPost: (
+    { __typename?: 'PostMutationResponse' }
+    & { post: (
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'createdAt' | 'content' | 'likes' | 'dislikes'>
+      & { author: (
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+        & { user: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'fullName'>
+        ) }
+      ), likedBy?: Maybe<Array<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+        & { user: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'fullName'>
+        ) }
+      )>>, dislikedBy?: Maybe<Array<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+        & { user: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'fullName'>
+        ) }
+      )>> }
+    ), profile: (
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id'>
+      & { posts?: Maybe<Array<(
+        { __typename?: 'Post' }
+        & Pick<Post, 'id'>
+      )>> }
+    ) }
+  ) }
+);
+
 export type LikePostMutationVariables = Exact<{
   data: LikePostInput;
 }>;
@@ -440,7 +485,54 @@ export type FeedQuery = (
   { __typename?: 'Query' }
   & { feed: Array<(
     { __typename?: 'Post' }
-    & Pick<Post, 'id'>
+    & Pick<Post, 'id' | 'createdAt' | 'content' | 'likes' | 'dislikes'>
+    & { author: (
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'fullName'>
+      ) }
+    ), likedBy?: Maybe<Array<(
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'fullName'>
+      ) }
+    )>>, dislikedBy?: Maybe<Array<(
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'fullName'>
+      ) }
+    )>>, comments?: Maybe<Array<(
+      { __typename?: 'Comment' }
+      & Pick<Comment, 'id' | 'createdAt' | 'content' | 'likes' | 'dislikes'>
+      & { author: (
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+        & { user: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'fullName'>
+        ) }
+      ), likedBy?: Maybe<Array<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+        & { user: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'fullName'>
+        ) }
+      )>>, dislikedBy?: Maybe<Array<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+        & { user: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'fullName'>
+        ) }
+      )>> }
+    )>> }
   )> }
 );
 
@@ -507,6 +599,71 @@ export function useLikeCommentMutation(baseOptions?: Apollo.MutationHookOptions<
 export type LikeCommentMutationHookResult = ReturnType<typeof useLikeCommentMutation>;
 export type LikeCommentMutationResult = Apollo.MutationResult<LikeCommentMutation>;
 export type LikeCommentMutationOptions = Apollo.BaseMutationOptions<LikeCommentMutation, LikeCommentMutationVariables>;
+export const CreatePostDocument = gql`
+    mutation CreatePost($content: String!) {
+  createPost(content: $content) {
+    post {
+      id
+      createdAt
+      content
+      likes
+      dislikes
+      author {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+      likedBy {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+      dislikedBy {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+    }
+    profile {
+      id
+      posts {
+        id
+      }
+    }
+  }
+}
+    `;
+export type CreatePostMutationFn = Apollo.MutationFunction<CreatePostMutation, CreatePostMutationVariables>;
+
+/**
+ * __useCreatePostMutation__
+ *
+ * To run a mutation, you first call `useCreatePostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createPostMutation, { data, loading, error }] = useCreatePostMutation({
+ *   variables: {
+ *      content: // value for 'content'
+ *   },
+ * });
+ */
+export function useCreatePostMutation(baseOptions?: Apollo.MutationHookOptions<CreatePostMutation, CreatePostMutationVariables>) {
+        return Apollo.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument, baseOptions);
+      }
+export type CreatePostMutationHookResult = ReturnType<typeof useCreatePostMutation>;
+export type CreatePostMutationResult = Apollo.MutationResult<CreatePostMutation>;
+export type CreatePostMutationOptions = Apollo.BaseMutationOptions<CreatePostMutation, CreatePostMutationVariables>;
 export const LikePostDocument = gql`
     mutation LikePost($data: LikePostInput!) {
   likePost(data: $data) {
@@ -771,6 +928,59 @@ export const FeedDocument = gql`
     query Feed {
   feed {
     id
+    createdAt
+    content
+    likes
+    dislikes
+    author {
+      id
+      user {
+        id
+        fullName
+      }
+    }
+    likedBy {
+      id
+      user {
+        id
+        fullName
+      }
+    }
+    dislikedBy {
+      id
+      user {
+        id
+        fullName
+      }
+    }
+    comments {
+      id
+      createdAt
+      content
+      likes
+      dislikes
+      author {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+      likedBy {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+      dislikedBy {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+    }
   }
 }
     `;

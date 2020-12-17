@@ -1,32 +1,6 @@
-query Feed {
-  feed {
-    id
-    createdAt
-    content
-    likes
-    dislikes
-    author {
-      id
-      user {
-        id
-        fullName
-      }
-    }
-    likedBy {
-      id
-      user {
-        id
-        fullName
-      }
-    }
-    dislikedBy {
-      id
-      user {
-        id
-        fullName
-      }
-    }
-    comments {
+mutation CreatePost($content: String!) {
+  createPost(content: $content) {
+    post {
       id
       createdAt
       content
@@ -52,6 +26,12 @@ query Feed {
           id
           fullName
         }
+      }
+    }
+    profile {
+      id
+      posts {
+        id
       }
     }
   }

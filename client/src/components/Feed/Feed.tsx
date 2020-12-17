@@ -1,7 +1,14 @@
-import { Paper, Avatar, TextField, makeStyles, Box } from '@material-ui/core';
+import {
+  Paper,
+  Avatar,
+  makeStyles,
+  Box,
+  CircularProgress,
+} from '@material-ui/core';
 
 import Post from '../Post';
-import { useUserQuery, useFeedQuery } from '../../generated/graphql';
+import FeedInput from './FeedInput';
+import { useFeedQuery } from '../../generated/graphql';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -13,30 +20,26 @@ const useStyles = makeStyles((theme) => ({
   marginRight: {
     marginRight: theme.spacing(2),
   },
-  inputBackground: {
-    backgroundColor: '#FAFAFA',
-  },
 }));
 
 const Feed: React.FC = () => {
   const classes = useStyles();
-  const { data: userData } = useUserQuery();
-  const { data: feedData } = useFeedQuery();
+  const { data: feedData, loading } = useFeedQuery();
 
+  console.log('feed rerender');
   return (
     <Box>
       <Paper className={classes.paper}>
         <Avatar className={classes.marginRight} />
-        <TextField
-          fullWidth
-          placeholder={`What's new, ${userData?.user.firstName || ''}?`}
-          variant="outlined"
-          InputProps={{ className: classes.inputBackground }}
-        />
+        <FeedInput />
       </Paper>
-      {feedData?.feed.map(({ id }) => (
-        <Post id={id} />
-      ))}
+      {loading ? (
+        <Box display="flex" alignItems="center" justifyContent="center">
+          <CircularProgress size={200} color="primary" />
+        </Box>
+      ) : (
+        feedData?.feed.map((post) => <Post key={post.id} {...post} />) || null
+      )}
     </Box>
   );
 };
