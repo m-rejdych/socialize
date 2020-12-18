@@ -13,6 +13,37 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const fragment = gql`
+  fragment NewPost on Feed {
+    id
+    content
+    createdAt
+    likes
+    dislikes
+    author {
+      id
+      user {
+        id
+        fullName
+      }
+    }
+    likedBy {
+      id
+      user {
+        id
+        fullName
+      }
+    }
+    dislikedBy {
+      id
+      user {
+        id
+        fullName
+      }
+    }
+  }
+`;
+
 const FeedInput: React.FC = () => {
   const [value, setValue] = useState('');
   const { data: userData } = useUserQuery();
@@ -28,36 +59,7 @@ const FeedInput: React.FC = () => {
             feed(existingPosts = []) {
               const newPost = cache.writeFragment({
                 data: post,
-                fragment: gql`
-                  fragment NewPost on Feed {
-                    id
-                    content
-                    createdAt
-                    likes
-                    dislikes
-                    author {
-                      id
-                      user {
-                        id
-                        fullName
-                      }
-                    }
-                    likedBy {
-                      id
-                      user {
-                        id
-                        fullName
-                      }
-                    }
-                    dislikedBy {
-                      id
-                      user {
-                        id
-                        fullName
-                      }
-                    }
-                  }
-                `,
+                fragment,
               });
               return [newPost, ...existingPosts];
             },

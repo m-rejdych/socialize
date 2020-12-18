@@ -255,6 +255,51 @@ export type Friendship = {
   friendsFrom: Scalars['DateTime'];
 };
 
+export type CreateCommentMutationVariables = Exact<{
+  data: CreateCommentInput;
+}>;
+
+
+export type CreateCommentMutation = (
+  { __typename?: 'Mutation' }
+  & { createComment: (
+    { __typename?: 'CreateCommentResponse' }
+    & { comment: (
+      { __typename?: 'Comment' }
+      & Pick<Comment, 'id' | 'content' | 'createdAt' | 'likes' | 'dislikes'>
+      & { likedBy?: Maybe<Array<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+        & { user: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'fullName'>
+        ) }
+      )>>, dislikedBy?: Maybe<Array<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+        & { user: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'fullName'>
+        ) }
+      )>> }
+    ), post: (
+      { __typename?: 'Post' }
+      & Pick<Post, 'id'>
+      & { comments?: Maybe<Array<(
+        { __typename?: 'Comment' }
+        & Pick<Comment, 'id'>
+      )>> }
+    ), profile: (
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id'>
+      & { comments?: Maybe<Array<(
+        { __typename?: 'Comment' }
+        & Pick<Comment, 'id'>
+      )>> }
+    ) }
+  ) }
+);
+
 export type LikeCommentMutationVariables = Exact<{
   data: LikeCommentInput;
 }>;
@@ -554,6 +599,70 @@ export type UserQuery = (
 );
 
 
+export const CreateCommentDocument = gql`
+    mutation CreateComment($data: CreateCommentInput!) {
+  createComment(data: $data) {
+    comment {
+      id
+      content
+      createdAt
+      likes
+      dislikes
+      likedBy {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+      dislikedBy {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+    }
+    post {
+      id
+      comments {
+        id
+      }
+    }
+    profile {
+      id
+      comments {
+        id
+      }
+    }
+  }
+}
+    `;
+export type CreateCommentMutationFn = Apollo.MutationFunction<CreateCommentMutation, CreateCommentMutationVariables>;
+
+/**
+ * __useCreateCommentMutation__
+ *
+ * To run a mutation, you first call `useCreateCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCommentMutation, { data, loading, error }] = useCreateCommentMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateCommentMutation(baseOptions?: Apollo.MutationHookOptions<CreateCommentMutation, CreateCommentMutationVariables>) {
+        return Apollo.useMutation<CreateCommentMutation, CreateCommentMutationVariables>(CreateCommentDocument, baseOptions);
+      }
+export type CreateCommentMutationHookResult = ReturnType<typeof useCreateCommentMutation>;
+export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
+export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
 export const LikeCommentDocument = gql`
     mutation LikeComment($data: LikeCommentInput!) {
   likeComment(data: $data) {

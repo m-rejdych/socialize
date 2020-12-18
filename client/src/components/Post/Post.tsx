@@ -21,10 +21,13 @@ import {
   ThumbDownOutlined,
   ChatBubbleOutline,
 } from '@material-ui/icons';
-import { useReactiveVar } from '@apollo/client';
+import { useReactiveVar, gql } from '@apollo/client';
 
 import Comment from '../Comment';
-import { useLikePostMutation } from '../../generated/graphql';
+import {
+  useLikePostMutation,
+  useCreateCommentMutation,
+} from '../../generated/graphql';
 import { userVar } from '../../graphql/reactiveVariables/user';
 import { Post as PostType } from '../../graphql/reactiveVariables/feed';
 
@@ -54,7 +57,34 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(1.5),
     paddingBottom: theme.spacing(1.5),
   },
+  flexGrow: {
+    flexGrow: 1,
+  },
 }));
+
+const fragment = gql`
+  fragment NewComment on Feed {
+    id
+    content
+    createdAt
+    likes
+    dislikes
+    likedBy {
+      id
+      user {
+        id
+        fullName
+      }
+    }
+    dislikedBy {
+      id
+      user {
+        id
+        fullName
+      }
+    }
+  }
+`;
 
 const Post: React.FC<PostType> = ({
   id,
@@ -70,22 +100,59 @@ const Post: React.FC<PostType> = ({
   comments,
 }) => {
   const [showAllComments, setShowAllComments] = useState(false);
+  const [value, setValue] = useState('');
   const classes = useStyles();
   const user = useReactiveVar(userVar);
   const [likePost] = useLikePostMutation();
-  console.log('rerender');
+  const [createComment] = useCreateCommentMutation({
+    update(cache, { data }) {
+      if (data?.createComment) {
+        const { comment, post } = data.createComment;
+        cache.modify({
+          id: cache.identify(post),
+          fields: {
+            comments(existingComments = []) {
+              const newComment = cache.writeFragment({
+                data: comment,
+                fragment,
+              });
+
+              return [newComment, ...existingComments];
+            },
+          },
+        });
+      }
+    },
+  });
 
   const isLiked = likedBy?.some(({ id }) => id === user?.profile.id);
   const isDisliked = dislikedBy?.some(({ id }) => id === user?.profile.id);
-  const mostLikedComment = comments
-    ?.slice()
-    .sort((a, b) => (a.likes > b.likes ? -1 : 1))[0];
   const sortedComments = comments
     ?.slice()
     .sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
 
   const handleLike = async (isLiked: boolean): Promise<void> => {
     await likePost({ variables: { data: { id, isLiked } } });
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>): void => {
+    if (e.key === 'Enter' && !e.shiftKey) handleSubmit(e);
+  };
+
+  const handleSubmit = async (
+    e:
+      | React.MouseEvent<HTMLButtonElement>
+      | React.KeyboardEvent<HTMLDivElement>,
+  ): Promise<void> => {
+    e.preventDefault();
+    await createComment({
+      variables: { data: { postId: id, content: value } },
+    });
+    setValue('');
   };
 
   const toggleShowAllComments = (): void => {
@@ -145,16 +212,27 @@ const Post: React.FC<PostType> = ({
           <Avatar />
           <TextField
             fullWidth
+            multiline
             variant="outlined"
             placeholder="Write a comment..."
-            InputProps={{ className: classes.inputBackground }}
+            InputProps={{
+              className: classes.inputBackground,
+              endAdornment: (
+                <Button color="secondary" onClick={handleSubmit}>
+                  Comment
+                </Button>
+              ),
+            }}
             inputProps={{ className: classes.inputPadding }}
             className={classes.marginLeft}
+            value={value}
+            onChange={handleChange}
+            onKeyPress={handleKeyPress}
           />
         </Box>
-        {comments && comments.length > 0 && mostLikedComment ? (
+        {comments && comments.length > 0 && sortedComments ? (
           <>
-            <Comment id={mostLikedComment.id} />
+            <Comment id={sortedComments[0].id} />
             <Typography
               variant="body2"
               className={classNames(
@@ -171,9 +249,7 @@ const Post: React.FC<PostType> = ({
                 : `View all ${comments.length} comments`}
             </Typography>
             {showAllComments && sortedComments
-              ? sortedComments
-                  .filter(({ id }) => id !== mostLikedComment.id)
-                  .map(({ id }) => <Comment id={id} />)
+              ? sortedComments.map(({ id }) => <Comment key={id} id={id} />)
               : null}
           </>
         ) : null}

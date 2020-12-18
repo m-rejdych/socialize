@@ -17,10 +17,12 @@ class CreateComment {
   ): Promise<CreateCommentResponse> {
     const { profileId } = ctx;
 
-    const profile = await Profile.findOne(profileId);
+    const profile = await Profile.findOne(profileId, {
+      relations: ['comments'],
+    });
     if (!profile) throw new Error('Profile not found!');
 
-    const post = await Post.findOne(postId);
+    const post = await Post.findOne(postId, { relations: ['comments'] });
     if (!post) throw new Error('Post not found!');
 
     const comment = Comment.create({

@@ -1,0 +1,37 @@
+mutation CreateComment($data: CreateCommentInput!) {
+  createComment(data: $data) {
+    comment {
+      id
+      content
+      createdAt
+      likes
+      dislikes
+      likedBy {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+      dislikedBy {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+    }
+    post {
+      id
+      comments {
+        id
+      }
+    }
+    profile {
+      id
+      comments {
+        id
+      }
+    }
+  }
+}
