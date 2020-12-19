@@ -22,6 +22,7 @@
     "@types/react-router-dom": "^5.1.6",
     "classnames": "^2.2.6",
     "date-fns": "^2.16.1",
+    "emoji-picker-react": "^3.2.4",
     "formik": "^2.2.5",
     "graphql": "^15.4.0",
     "gsap": "^3.5.1",

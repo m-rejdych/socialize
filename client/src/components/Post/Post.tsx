@@ -22,8 +22,10 @@ import {
   ChatBubbleOutline,
 } from '@material-ui/icons';
 import { useReactiveVar, gql } from '@apollo/client';
+import { IEmojiData } from 'emoji-picker-react';
 
 import Comment from '../Comment';
+import EmojiPicker from '../EmojiPicker';
 import {
   useLikePostMutation,
   useCreateCommentMutation,
@@ -127,9 +129,9 @@ const Post: React.FC<PostType> = ({
 
   const isLiked = likedBy?.some(({ id }) => id === user?.profile.id);
   const isDisliked = dislikedBy?.some(({ id }) => id === user?.profile.id);
-  const sortedComments = comments
-    ?.slice()
-    .sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
+  const sortedComments =
+    comments?.slice().sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1)) ||
+    [];
 
   const handleLike = async (isLiked: boolean): Promise<void> => {
     await likePost({ variables: { data: { id, isLiked } } });
@@ -149,15 +151,23 @@ const Post: React.FC<PostType> = ({
       | React.KeyboardEvent<HTMLDivElement>,
   ): Promise<void> => {
     e.preventDefault();
-    await createComment({
-      variables: { data: { postId: id, content: value } },
-    });
-    setValue('');
+    if (value.trim().length > 0) {
+      await createComment({
+        variables: { data: { postId: id, content: value } },
+      });
+      setValue('');
+    }
+  };
+
+  const handleSelectEmoji = (_: MouseEvent, emojiObject: IEmojiData): void => {
+    const { emoji } = emojiObject;
+    setValue(`${value}${emoji}`);
   };
 
   const toggleShowAllComments = (): void => {
     setShowAllComments((prev) => !prev);
   };
+  console.log('rerender');
 
   return (
     <Card elevation={3} className={classes.card}>
@@ -218,9 +228,16 @@ const Post: React.FC<PostType> = ({
             InputProps={{
               className: classes.inputBackground,
               endAdornment: (
-                <Button color="secondary" onClick={handleSubmit}>
-                  Comment
-                </Button>
+                <Box display="flex">
+                  <EmojiPicker handleSelect={handleSelectEmoji} />
+                  <Button
+                    disabled={value.trim().length === 0}
+                    color="secondary"
+                    onClick={handleSubmit}
+                  >
+                    Comment
+                  </Button>
+                </Box>
               ),
             }}
             inputProps={{ className: classes.inputPadding }}
@@ -230,9 +247,9 @@ const Post: React.FC<PostType> = ({
             onKeyPress={handleKeyPress}
           />
         </Box>
-        {comments && comments.length > 0 && sortedComments ? (
+        {comments && comments.length > 0 ? (
           <>
-            <Comment id={sortedComments[0].id} />
+            <Comment id={sortedComments[0]?.id} />
             <Typography
               variant="body2"
               className={classNames(

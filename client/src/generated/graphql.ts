@@ -359,6 +359,31 @@ export type CreatePostMutation = (
           { __typename?: 'User' }
           & Pick<User, 'id' | 'fullName'>
         ) }
+      )>>, comments?: Maybe<Array<(
+        { __typename?: 'Comment' }
+        & Pick<Comment, 'id' | 'content' | 'createdAt' | 'likes' | 'dislikes'>
+        & { likedBy?: Maybe<Array<(
+          { __typename?: 'Profile' }
+          & Pick<Profile, 'id'>
+          & { user: (
+            { __typename?: 'User' }
+            & Pick<User, 'id' | 'fullName'>
+          ) }
+        )>>, dislikedBy?: Maybe<Array<(
+          { __typename?: 'Profile' }
+          & Pick<Profile, 'id'>
+          & { user: (
+            { __typename?: 'User' }
+            & Pick<User, 'id' | 'fullName'>
+          ) }
+        )>>, author: (
+          { __typename?: 'Profile' }
+          & Pick<Profile, 'id'>
+          & { user: (
+            { __typename?: 'User' }
+            & Pick<User, 'id' | 'fullName'>
+          ) }
+        ) }
       )>> }
     ), profile: (
       { __typename?: 'Profile' }
@@ -736,6 +761,34 @@ export const CreatePostDocument = gql`
         user {
           id
           fullName
+        }
+      }
+      comments {
+        id
+        content
+        createdAt
+        likes
+        dislikes
+        likedBy {
+          id
+          user {
+            id
+            fullName
+          }
+        }
+        dislikedBy {
+          id
+          user {
+            id
+            fullName
+          }
+        }
+        author {
+          id
+          user {
+            id
+            fullName
+          }
         }
       }
     }

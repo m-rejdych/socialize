@@ -27,6 +27,34 @@ mutation CreatePost($content: String!) {
           fullName
         }
       }
+      comments {
+        id
+        content
+        createdAt
+        likes
+        dislikes
+        likedBy {
+          id
+          user {
+            id
+            fullName
+          }
+        }
+        dislikedBy {
+          id
+          user {
+            id
+            fullName
+          }
+        }
+        author {
+          id
+          user {
+            id
+            fullName
+          }
+        }
+      }
     }
     profile {
       id

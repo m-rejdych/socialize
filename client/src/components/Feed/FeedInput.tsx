@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { TextField, Button, makeStyles } from '@material-ui/core';
+import { TextField, Button, makeStyles, Box } from '@material-ui/core';
 import { gql } from '@apollo/client';
+import { IEmojiData } from 'emoji-picker-react';
 
 import { useUserQuery, useCreatePostMutation } from '../../generated/graphql';
+import EmojiPicker from '../EmojiPicker';
 
 const useStyles = makeStyles((theme) => ({
   inputBackground: {
@@ -81,8 +83,15 @@ const FeedInput: React.FC = () => {
     e: React.FormEvent<HTMLFormElement> | React.KeyboardEvent<HTMLDivElement>,
   ): Promise<void> => {
     e.preventDefault();
-    await createPost({ variables: { content: value } });
-    setValue('');
+    if (value.trim().length > 0) {
+      await createPost({ variables: { content: value } });
+      setValue('');
+    }
+  };
+
+  const handleSelectEmoji = (_: MouseEvent, emojiObject: IEmojiData): void => {
+    const { emoji } = emojiObject;
+    setValue(`${value}${emoji}`);
   };
 
   return (
@@ -95,9 +104,16 @@ const FeedInput: React.FC = () => {
         InputProps={{
           className: classes.inputBackground,
           endAdornment: (
-            <Button type="submit" color="secondary">
-              Post
-            </Button>
+            <Box display="flex">
+              <EmojiPicker handleSelect={handleSelectEmoji} />
+              <Button
+                disabled={value.trim().length === 0}
+                type="submit"
+                color="secondary"
+              >
+                Post
+              </Button>
+            </Box>
           ),
         }}
         value={value}

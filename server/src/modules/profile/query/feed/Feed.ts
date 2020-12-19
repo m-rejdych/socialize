@@ -22,6 +22,31 @@ class Feed {
         'profilePostsDislikedBy.user',
         'profilePostsDislikedByUser',
       )
+      .leftJoinAndSelect('profilePosts.comments', 'profilePostsComments')
+      .leftJoinAndSelect(
+        'profilePostsComments.author',
+        'profilePostsCommentsAuthor',
+      )
+      .leftJoinAndSelect(
+        'profilePostsCommentsAuthor.user',
+        'profilePostsCommentsAuthorUser',
+      )
+      .leftJoinAndSelect(
+        'profilePostsComments.likedBy',
+        'profilePostsCommentsLikedBy',
+      )
+      .leftJoinAndSelect(
+        'profilePostsCommentsLikedBy.user',
+        'profilePostsCommentsLikedByUser',
+      )
+      .leftJoinAndSelect(
+        'profilePostsComments.dislikedBy',
+        'profilePostsCommentsDislikedBy',
+      )
+      .leftJoinAndSelect(
+        'profilePostsCommentsDislikedBy.user',
+        'profilePostsCommentsDislikedByUser',
+      )
       .leftJoinAndSelect(
         'profile.requestedFriendships',
         'requestedFriendship',
