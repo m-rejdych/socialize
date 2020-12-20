@@ -26,6 +26,7 @@ import { IEmojiData } from 'emoji-picker-react';
 
 import Comment from '../Comment';
 import EmojiPicker from '../EmojiPicker';
+import Settings from '../Settings';
 import {
   useLikePostMutation,
   useCreateCommentMutation,
@@ -50,7 +51,9 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
   },
   textUnderline: {
-    textDecoration: 'underline',
+    '&:hover': {
+      textDecoration: 'underline',
+    },
   },
   inputBackground: {
     backgroundColor: '#FAFAFA',
@@ -91,6 +94,7 @@ const fragment = gql`
 const Post: React.FC<PostType> = ({
   id,
   author: {
+    id: profileId,
     user: { fullName },
   },
   content,
@@ -127,6 +131,7 @@ const Post: React.FC<PostType> = ({
     },
   });
 
+  const isMe = user?.profile.id === profileId;
   const isLiked = likedBy?.some(({ id }) => id === user?.profile.id);
   const isDisliked = dislikedBy?.some(({ id }) => id === user?.profile.id);
   const sortedComments =
@@ -173,6 +178,7 @@ const Post: React.FC<PostType> = ({
     <Card elevation={3} className={classes.card}>
       <CardHeader
         avatar={<Avatar />}
+        action={isMe ? <Settings postId={id} deletable /> : null}
         title={
           <Box>
             <Typography className={classes.fontBold}>{fullName}</Typography>
@@ -249,24 +255,28 @@ const Post: React.FC<PostType> = ({
         </Box>
         {comments && comments.length > 0 ? (
           <>
-            <Comment id={sortedComments[0]?.id} />
-            <Typography
-              variant="body2"
-              className={classNames(
-                classes.fontBold,
-                classes.cursorPointer,
-                classes.textUnderline,
-                classes.marginTop,
-              )}
-              color="textSecondary"
-              onClick={toggleShowAllComments}
-            >
-              {showAllComments
-                ? 'Hide comments'
-                : `View all ${comments.length} comments`}
-            </Typography>
+            <Comment {...sortedComments[0]} />
+            {comments.length > 1 && (
+              <Typography
+                variant="body2"
+                className={classNames(
+                  classes.fontBold,
+                  classes.cursorPointer,
+                  classes.textUnderline,
+                  classes.marginTop,
+                )}
+                color="textSecondary"
+                onClick={toggleShowAllComments}
+              >
+                {showAllComments
+                  ? 'Hide comments'
+                  : `View all ${comments.length} comments`}
+              </Typography>
+            )}
             {showAllComments && sortedComments
-              ? sortedComments.map(({ id }) => <Comment key={id} id={id} />)
+              ? sortedComments
+                  .slice(1)
+                  .map((comment) => <Comment key={comment.id} {...comment} />)
               : null}
           </>
         ) : null}
