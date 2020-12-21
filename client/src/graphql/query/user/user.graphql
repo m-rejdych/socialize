@@ -5,6 +5,7 @@ query User($id: ID) {
     firstName
     lastName
     fullName
+    userName
     isAdmin
     profile {
       id

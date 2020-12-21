@@ -76,6 +76,7 @@ export type User = {
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   fullName: Scalars['String'];
+  userName: Scalars['String'];
   isAdmin: Scalars['Boolean'];
   profile: Profile;
 };
@@ -478,7 +479,7 @@ export type LoginMutation = (
     & Pick<UserMutationResponse, 'token'>
     & { user: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'fullName'>
+      & Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'fullName' | 'userName'>
       & { profile: (
         { __typename?: 'Profile' }
         & Pick<Profile, 'id'>
@@ -499,7 +500,7 @@ export type RegisterMutation = (
     & Pick<UserMutationResponse, 'token'>
     & { user: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'fullName'>
+      & Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'fullName' | 'userName'>
       & { profile: (
         { __typename?: 'Profile' }
         & Pick<Profile, 'id'>
@@ -648,7 +649,7 @@ export type UserQuery = (
   { __typename?: 'Query' }
   & { user: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'fullName' | 'isAdmin'>
+    & Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'fullName' | 'userName' | 'isAdmin'>
     & { profile: (
       { __typename?: 'Profile' }
       & Pick<Profile, 'id'>
@@ -988,6 +989,7 @@ export const LoginDocument = gql`
       firstName
       lastName
       fullName
+      userName
       profile {
         id
       }
@@ -1030,6 +1032,7 @@ export const RegisterDocument = gql`
       firstName
       lastName
       fullName
+      userName
       profile {
         id
       }
@@ -1277,6 +1280,7 @@ export const UserDocument = gql`
     firstName
     lastName
     fullName
+    userName
     isAdmin
     profile {
       id

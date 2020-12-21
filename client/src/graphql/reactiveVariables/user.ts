@@ -6,6 +6,7 @@ interface User {
   firstName: string;
   lastName: string;
   fullName: string;
+  userName: string;
   profile: { id: string };
 }
 

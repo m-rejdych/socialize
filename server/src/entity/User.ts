@@ -36,6 +36,11 @@ class User extends BaseEntity {
     return `${root.firstName} ${root.lastName}`;
   }
 
+  @Field()
+  userName(@Root() root: User): string {
+    return `@${root.firstName.toLowerCase()}${root.lastName.toLowerCase()}`;
+  }
+
   @Column({ default: false })
   @Field()
   isAdmin: boolean;

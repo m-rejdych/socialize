@@ -1,6 +1,7 @@
 import { Grid, Box, CircularProgress } from '@material-ui/core';
 
 import Feed from '../../components/Feed';
+import Dashboard from '../../components/Dashboard';
 import { useUserQuery } from '../../generated/graphql';
 
 const Home: React.FC = () => {
@@ -18,8 +19,10 @@ const Home: React.FC = () => {
           <CircularProgress size={300} color="primary" />
         </Box>
       ) : (
-        <Grid container>
-          <Grid item xs={3} />
+        <Grid container spacing={3}>
+          <Grid item xs={3}>
+            <Dashboard />
+          </Grid>
           <Grid item xs={6}>
             <Feed />
           </Grid>
