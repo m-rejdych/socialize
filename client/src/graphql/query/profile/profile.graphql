@@ -1,0 +1,13 @@
+query Profile($id: ID) {
+  profile(id: $id) {
+    id
+    user {
+      id
+      email
+      firstName
+      lastName
+      fullName
+      userName
+    }
+  }
+}

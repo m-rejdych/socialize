@@ -66,7 +66,7 @@ const SecondSection: React.FC = () => {
 
     tl.fromTo(watermark, { x: '-=100' }, { autoAlpha: 1, x: '+=100' })
       .fromTo(text, { y: '+=100' }, { autoAlpha: 1, y: '-=100' })
-      .fromTo(svg, { x: '+=100' }, { x: '-=100', autoAlpha: 1 });
+      .fromTo(svg, { x: '+=100' }, { autoAlpha: 1, x: '-=100' });
   }, []);
 
   return (
