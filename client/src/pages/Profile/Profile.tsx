@@ -7,10 +7,13 @@ import {
   Typography,
   Grid,
   Paper,
+  Divider,
 } from '@material-ui/core';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
+import { useReactiveVar } from '@apollo/client';
 
 import { useProfileQuery } from '../../generated/graphql';
+import { userVar } from 'src/graphql/reactiveVariables/user';
 import Post from '../../components/Post';
 import PostInput from '../../components/PostInput';
 
@@ -35,17 +38,23 @@ const useStyles = makeStyles((theme) => ({
   marginRight: {
     marginRight: theme.spacing(2),
   },
+  cursorPointer: {
+    cursor: 'pointer',
+  },
 }));
 
 const Profile: React.FC = () => {
   const classes = useStyles();
+  const history = useHistory();
+  const user = useReactiveVar(userVar);
   const { id } = useParams<{ id: string }>();
   const { data, loading } = useProfileQuery({ variables: { id } });
 
   if (data?.profile) {
     const {
-      user: { fullName, email },
+      user: { firstName, fullName, email },
       posts,
+      friends,
     } = data.profile;
 
     const fields = [
@@ -71,9 +80,14 @@ const Profile: React.FC = () => {
       },
     ];
 
-    const sortedPosts = posts
-      ? [...posts].sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
-      : [];
+    const sortedPosts =
+      posts && posts.length > 0
+        ? [...posts].sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
+        : null;
+
+    const goToProfile = (id: string): void => {
+      history.push(`/profile/${id}`);
+    };
 
     return (
       <Container maxWidth="md">
@@ -86,21 +100,75 @@ const Profile: React.FC = () => {
           </Box>
           <Grid container spacing={3} justify="center">
             <Grid item xs={5}>
-              {fields.map(({ label, value }) => (
-                <Box key={label} mb={2}>
-                  <Typography className={classes.fontBold}>{label}</Typography>
-                  <Typography>{value}</Typography>
+              <Typography
+                variant="h5"
+                gutterBottom
+                className={classes.fontBold}
+              >
+                Info
+              </Typography>
+              <Box mb={4}>
+                {fields.map(({ label, value }) => (
+                  <Box key={label} mb={2}>
+                    <Typography className={classes.fontBold}>
+                      {label}
+                    </Typography>
+                    <Typography>{value}</Typography>
+                  </Box>
+                ))}
+              </Box>
+              <Divider />
+              {friends ? (
+                <Box mt={4}>
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    className={classes.fontBold}
+                  >
+                    Friends
+                  </Typography>
+                  <Box display="flex">
+                    {friends.map(({ id, user: { fullName } }) => (
+                      <Box
+                        key={id}
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="center"
+                        mr={2}
+                        className={classes.cursorPointer}
+                        onClick={(): void => goToProfile(id)}
+                      >
+                        <Avatar className={classes.marginBottom} />
+                        <Typography className={classes.fontBold}>
+                          {fullName}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Box>
                 </Box>
-              ))}
+              ) : null}
             </Grid>
             <Grid item xs={7}>
-              <Paper className={classes.paper}>
-                <Avatar className={classes.marginRight} />
-                <PostInput isProfile />
-              </Paper>
-              {sortedPosts.map((post) => (
+              {user?.profile.id === id && (
+                <Paper className={classes.paper}>
+                  <Avatar className={classes.marginRight} />
+                  <PostInput isProfile />
+                </Paper>
+              )}
+              {sortedPosts?.map((post) => (
                 <Post key={post.id} isProfile {...post} />
-              ))}
+              )) || (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  height={300}
+                >
+                  <Typography color="textSecondary" variant="h4">
+                    {`${firstName} has no posts`}
+                  </Typography>
+                </Box>
+              )}
             </Grid>
           </Grid>
         </Box>
