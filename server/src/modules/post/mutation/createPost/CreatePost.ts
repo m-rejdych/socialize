@@ -15,7 +15,9 @@ class CreatePost {
   ): Promise<PostMutationResponse> {
     const { profileId } = ctx;
 
-    const profile = await Profile.findOne(profileId, { relations: ['user'] });
+    const profile = await Profile.findOne(profileId, {
+      relations: ['user', 'posts'],
+    });
     if (!profile) throw new Error('Profile not found!');
 
     const post = Post.create({

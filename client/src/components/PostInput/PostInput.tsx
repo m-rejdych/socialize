@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const fragment = gql`
-  fragment NewPost on Feed {
+  fragment NewPost on Posts {
     id
     content
     createdAt
@@ -46,7 +46,12 @@ const fragment = gql`
   }
 `;
 
-const FeedInput: React.FC = () => {
+interface Props {
+  isFeed?: boolean;
+  isProfile?: boolean;
+}
+
+const PostInput: React.FC<Props> = ({ isFeed, isProfile }) => {
   const [value, setValue] = useState('');
   const { data: userData } = useUserQuery();
   const classes = useStyles();
@@ -54,19 +59,37 @@ const FeedInput: React.FC = () => {
     update(cache, { data }) {
       if (data?.createPost) {
         const {
-          createPost: { post },
+          createPost: { post, profile },
         } = data;
-        cache.modify({
-          fields: {
-            feed(existingPosts = []) {
-              const newPost = cache.writeFragment({
-                data: post,
-                fragment,
-              });
-              return [newPost, ...existingPosts];
+
+        if (isFeed) {
+          cache.modify({
+            fields: {
+              feed(existingPosts = []) {
+                const newPost = cache.writeFragment({
+                  data: post,
+                  fragment,
+                });
+
+                return [newPost, ...existingPosts];
+              },
             },
-          },
-        });
+          });
+        } else if (isProfile) {
+          cache.modify({
+            id: cache.identify(profile),
+            fields: {
+              posts(existingPosts = []) {
+                const newPost = cache.writeFragment({
+                  data: post,
+                  fragment,
+                });
+
+                return [newPost, ...existingPosts];
+              },
+            },
+          });
+        }
       }
     },
   });
@@ -124,4 +147,4 @@ const FeedInput: React.FC = () => {
   );
 };
 
-export default FeedInput;
+export default PostInput;

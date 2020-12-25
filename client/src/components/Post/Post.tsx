@@ -91,7 +91,12 @@ const fragment = gql`
   }
 `;
 
-const Post: React.FC<PostType> = ({
+interface Props extends PostType {
+  isFeed?: boolean;
+  isProfile?: boolean;
+}
+
+const Post: React.FC<Props> = ({
   id,
   author: {
     id: profileId,
@@ -104,6 +109,8 @@ const Post: React.FC<PostType> = ({
   dislikedBy,
   likedBy,
   comments,
+  isFeed,
+  isProfile,
 }) => {
   const [showAllComments, setShowAllComments] = useState(false);
   const [value, setValue] = useState('');
@@ -178,7 +185,16 @@ const Post: React.FC<PostType> = ({
     <Card elevation={3} className={classes.card}>
       <CardHeader
         avatar={<Avatar />}
-        action={isMe ? <Settings postId={id} deletable /> : null}
+        action={
+          isMe ? (
+            <Settings
+              postId={id}
+              isProfile={isProfile}
+              isFeed={isFeed}
+              deletable
+            />
+          ) : null
+        }
         title={
           <Box>
             <Typography className={classes.fontBold}>{fullName}</Typography>

@@ -1,3 +1,11 @@
 mutation DeletePost($id: ID!) {
-  deletePost(id: $id)
+  deletePost(id: $id) {
+    id
+    profile {
+      id
+      posts {
+        id
+      }
+    }
+  }
 }

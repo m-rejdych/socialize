@@ -126,7 +126,7 @@ export type Mutation = {
   register: UserMutationResponse;
   login: UserMutationResponse;
   createPost: PostMutationResponse;
-  deletePost: Scalars['String'];
+  deletePost: DeletePostResponse;
   updatePostContent: PostMutationResponse;
   likePost: PostMutationResponse;
   createComment: CreateCommentResponse;
@@ -212,6 +212,12 @@ export type LoginInput = {
 export type PostMutationResponse = {
   __typename?: 'PostMutationResponse';
   post: Post;
+  profile: Profile;
+};
+
+export type DeletePostResponse = {
+  __typename?: 'DeletePostResponse';
+  id: Scalars['String'];
   profile: Profile;
 };
 
@@ -428,7 +434,18 @@ export type DeletePostMutationVariables = Exact<{
 
 export type DeletePostMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'deletePost'>
+  & { deletePost: (
+    { __typename?: 'DeletePostResponse' }
+    & Pick<DeletePostResponse, 'id'>
+    & { profile: (
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id'>
+      & { posts?: Maybe<Array<(
+        { __typename?: 'Post' }
+        & Pick<Post, 'id'>
+      )>> }
+    ) }
+  ) }
 );
 
 export type LikePostMutationVariables = Exact<{
@@ -993,7 +1010,15 @@ export type CreatePostMutationResult = Apollo.MutationResult<CreatePostMutation>
 export type CreatePostMutationOptions = Apollo.BaseMutationOptions<CreatePostMutation, CreatePostMutationVariables>;
 export const DeletePostDocument = gql`
     mutation DeletePost($id: ID!) {
-  deletePost(id: $id)
+  deletePost(id: $id) {
+    id
+    profile {
+      id
+      posts {
+        id
+      }
+    }
+  }
 }
     `;
 export type DeletePostMutationFn = Apollo.MutationFunction<DeletePostMutation, DeletePostMutationVariables>;

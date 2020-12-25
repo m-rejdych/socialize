@@ -6,11 +6,13 @@ import {
   CircularProgress,
   Typography,
   Grid,
+  Paper,
 } from '@material-ui/core';
 import { useParams } from 'react-router-dom';
 
 import { useProfileQuery } from '../../generated/graphql';
 import Post from '../../components/Post';
+import PostInput from '../../components/PostInput';
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -24,13 +26,21 @@ const useStyles = makeStyles((theme) => ({
   marginBottom: {
     marginBottom: theme.spacing(1),
   },
+  paper: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  },
+  marginRight: {
+    marginRight: theme.spacing(2),
+  },
 }));
 
 const Profile: React.FC = () => {
   const classes = useStyles();
   const { id } = useParams<{ id: string }>();
-  const { data, loading, error } = useProfileQuery({ variables: { id } });
-  console.log(data, error);
+  const { data, loading } = useProfileQuery({ variables: { id } });
 
   if (data?.profile) {
     const {
@@ -61,6 +71,10 @@ const Profile: React.FC = () => {
       },
     ];
 
+    const sortedPosts = posts
+      ? [...posts].sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
+      : [];
+
     return (
       <Container maxWidth="md">
         <Box minHeight="100vh" py={3}>
@@ -80,7 +94,13 @@ const Profile: React.FC = () => {
               ))}
             </Grid>
             <Grid item xs={7}>
-              {posts?.map((post) => <Post key={post.id} {...post} />) || null}
+              <Paper className={classes.paper}>
+                <Avatar className={classes.marginRight} />
+                <PostInput isProfile />
+              </Paper>
+              {sortedPosts.map((post) => (
+                <Post key={post.id} isProfile {...post} />
+              ))}
             </Grid>
           </Grid>
         </Box>

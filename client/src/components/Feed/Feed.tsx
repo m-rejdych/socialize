@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 
 import Post from '../Post';
-import FeedInput from './FeedInput';
+import PostInput from '../PostInput';
 import { useFeedQuery } from '../../generated/graphql';
 
 const useStyles = makeStyles((theme) => ({
@@ -31,14 +31,15 @@ const Feed: React.FC = () => {
     <Box>
       <Paper className={classes.paper}>
         <Avatar className={classes.marginRight} />
-        <FeedInput />
+        <PostInput isFeed />
       </Paper>
       {loading ? (
         <Box display="flex" alignItems="center" justifyContent="center">
           <CircularProgress size={200} color="primary" />
         </Box>
       ) : (
-        feedData?.feed.map((post) => <Post key={post.id} {...post} />) || null
+        feedData?.feed.map((post) => <Post key={post.id} isFeed {...post} />) ||
+        null
       )}
     </Box>
   );

@@ -11,15 +11,16 @@ import {
 import Post from '../../../../entity/Post';
 import Profile from '../../../../entity/Profile';
 import Context from '../../../../types/Context';
+import DeletePostResponse from './DeletePostResponse';
 
 @Resolver()
 class DeletePost {
   @Authorized()
-  @Mutation(() => String)
+  @Mutation(() => DeletePostResponse)
   async deletePost(
     @Arg('id', () => ID) id: string,
     @Ctx() ctx: Context,
-  ): Promise<string> {
+  ): Promise<DeletePostResponse> {
     const { profileId } = ctx;
 
     const post = await Post.findOne(id, {
@@ -27,14 +28,17 @@ class DeletePost {
     });
     if (!post) throw new Error('Post not found!');
 
-    const profile = await Profile.findOne(profileId);
+    const profile = await Profile.findOne(profileId, { relations: ['posts'] });
     if (!profile) throw new Error('Profile not found!');
 
     if ((post.author as unknown) !== profile.id) throw new ForbiddenError();
 
     await post.remove();
 
-    return id;
+    return {
+      id,
+      profile,
+    };
   }
 }
 

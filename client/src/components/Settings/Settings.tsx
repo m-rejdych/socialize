@@ -27,6 +27,8 @@ interface Props {
   editable?: boolean;
   postId?: string;
   commentId?: string;
+  isFeed?: boolean;
+  isProfile?: boolean;
   small?: boolean;
 }
 
@@ -35,6 +37,8 @@ const Settings: React.FC<Props> = ({
   editable,
   postId,
   commentId,
+  isFeed,
+  isProfile,
   small,
 }) => {
   const classes = useStyles();
@@ -43,15 +47,32 @@ const Settings: React.FC<Props> = ({
   const [deletePost] = useDeletePostMutation({
     update(cache, { data }) {
       if (data?.deletePost) {
-        cache.modify({
-          fields: {
-            feed(existingPosts = [], { readField }) {
-              return existingPosts.filter(
-                (post: Post) => readField('id', post) !== postId,
-              );
+        const { id, profile } = data.deletePost;
+
+        if (isFeed) {
+          cache.modify({
+            fields: {
+              feed(existingPosts = [], { readField }) {
+                return existingPosts.filter(
+                  (post: Post) => readField('id', post) !== id,
+                );
+              },
             },
-          },
-        });
+          });
+        }
+
+        if (isProfile) {
+          cache.modify({
+            id: cache.identify(profile),
+            fields: {
+              posts(existingPosts = [], { readField }) {
+                return existingPosts.filter(
+                  (post: Post) => readField('id', post) !== id,
+                );
+              },
+            },
+          });
+        }
       }
     },
   });
