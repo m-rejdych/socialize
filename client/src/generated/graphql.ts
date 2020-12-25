@@ -91,6 +91,7 @@ export type Profile = {
   dislikedPosts?: Maybe<Array<Post>>;
   likedComments?: Maybe<Array<Comment>>;
   dislikedComments?: Maybe<Array<Comment>>;
+  friends: Array<Profile>;
 };
 
 export type Post = {
@@ -455,13 +456,20 @@ export type LikePostMutation = (
       & { posts?: Maybe<Array<(
         { __typename?: 'Post' }
         & Pick<Post, 'id'>
-        & { likedBy?: Maybe<Array<(
+      )>>, likedPosts?: Maybe<Array<(
+        { __typename?: 'Post' }
+        & Pick<Post, 'id'>
+        & { author: (
           { __typename?: 'Profile' }
           & Pick<Profile, 'id'>
-        )>>, dislikedBy?: Maybe<Array<(
+        ) }
+      )>>, dislikedPosts?: Maybe<Array<(
+        { __typename?: 'Post' }
+        & Pick<Post, 'id'>
+        & { author: (
           { __typename?: 'Profile' }
           & Pick<Profile, 'id'>
-        )>> }
+        ) }
       )>> }
     ) }
   ) }
@@ -653,7 +661,78 @@ export type ProfileQuery = (
     & { user: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'fullName' | 'userName'>
-    ) }
+    ), posts?: Maybe<Array<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'content' | 'createdAt' | 'likes' | 'dislikes'>
+      & { author: (
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+        & { user: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'fullName'>
+        ) }
+      ), likedBy?: Maybe<Array<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+        & { user: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'fullName'>
+        ) }
+      )>>, dislikedBy?: Maybe<Array<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+        & { user: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'fullName'>
+        ) }
+      )>>, comments?: Maybe<Array<(
+        { __typename?: 'Comment' }
+        & Pick<Comment, 'id' | 'content' | 'createdAt' | 'likes' | 'dislikes'>
+        & { author: (
+          { __typename?: 'Profile' }
+          & Pick<Profile, 'id'>
+          & { user: (
+            { __typename?: 'User' }
+            & Pick<User, 'id' | 'fullName'>
+          ) }
+        ), likedBy?: Maybe<Array<(
+          { __typename?: 'Profile' }
+          & Pick<Profile, 'id'>
+          & { user: (
+            { __typename?: 'User' }
+            & Pick<User, 'id' | 'fullName'>
+          ) }
+        )>>, dislikedBy?: Maybe<Array<(
+          { __typename?: 'Profile' }
+          & Pick<Profile, 'id'>
+          & { user: (
+            { __typename?: 'User' }
+            & Pick<User, 'id' | 'fullName'>
+          ) }
+        )>> }
+      )>> }
+    )>>, likedPosts?: Maybe<Array<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id'>
+      & { author: (
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+      ) }
+    )>>, dislikedPosts?: Maybe<Array<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id'>
+      & { author: (
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+      ) }
+    )>>, friends: Array<(
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'fullName'>
+      ) }
+    )> }
   ) }
 );
 
@@ -960,10 +1039,16 @@ export const LikePostDocument = gql`
       id
       posts {
         id
-        likedBy {
+      }
+      likedPosts {
+        id
+        author {
           id
         }
-        dislikedBy {
+      }
+      dislikedPosts {
+        id
+        author {
           id
         }
       }
@@ -1300,6 +1385,81 @@ export const ProfileDocument = gql`
       lastName
       fullName
       userName
+    }
+    posts {
+      id
+      content
+      createdAt
+      likes
+      dislikes
+      author {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+      likedBy {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+      dislikedBy {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+      comments {
+        id
+        content
+        createdAt
+        likes
+        dislikes
+        author {
+          id
+          user {
+            id
+            fullName
+          }
+        }
+        likedBy {
+          id
+          user {
+            id
+            fullName
+          }
+        }
+        dislikedBy {
+          id
+          user {
+            id
+            fullName
+          }
+        }
+      }
+    }
+    likedPosts {
+      id
+      author {
+        id
+      }
+    }
+    dislikedPosts {
+      id
+      author {
+        id
+      }
+    }
+    friends {
+      id
+      user {
+        id
+        fullName
+      }
     }
   }
 }

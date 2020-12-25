@@ -46,6 +46,7 @@ const Comment: React.FC<Props> = ({
   likes,
   dislikes,
   author: {
+    id: profileId,
     user: { fullName },
   },
   likedBy,
@@ -55,6 +56,7 @@ const Comment: React.FC<Props> = ({
   const user = useReactiveVar(userVar);
   const [likeComment] = useLikeCommentMutation();
 
+  const isMe = user?.profile.id === profileId;
   const isLiked = likedBy?.some(({ id }) => id === user?.profile.id);
   const isDisliked = dislikedBy?.some(({ id }) => id === user?.profile.id);
 
@@ -72,7 +74,7 @@ const Comment: React.FC<Props> = ({
           >
             {fullName}
           </Typography>
-          <Settings commentId={id} deletable small />
+          {isMe && <Settings commentId={id} deletable small />}
         </Box>
         <Typography>{content}</Typography>
         <Box display="flex">

@@ -6,6 +6,19 @@ import Context from '../../../../types/Context';
 const relations = [
   'user',
   'posts',
+  'posts.author',
+  'posts.author.user',
+  'posts.likedBy',
+  'posts.likedBy.user',
+  'posts.dislikedBy',
+  'posts.dislikedBy.user',
+  'posts.comments',
+  'posts.comments.author',
+  'posts.comments.author.user',
+  'posts.comments.likedBy',
+  'posts.comments.likedBy.user',
+  'posts.comments.dislikedBy',
+  'posts.comments.dislikedBy.user',
   'likedPosts',
   'likedPosts.author',
   'likedPosts.author.user',
@@ -18,6 +31,12 @@ const relations = [
   'dislikedComments',
   'dislikedComments.author',
   'dislikedComments.author.user',
+  'requestedFriendships',
+  'requestedFriendships.addressedTo',
+  'requestedFriendships.addressedTo.user',
+  'receivedFriendships',
+  'receivedFriendships.requestedBy',
+  'receivedFriendships.requestedBy.user',
 ];
 
 @Resolver()

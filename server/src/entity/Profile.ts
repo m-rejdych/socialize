@@ -7,7 +7,7 @@ import {
   ManyToMany,
   JoinColumn,
 } from 'typeorm';
-import { ObjectType, Field, ID } from 'type-graphql';
+import { ObjectType, Field, ID, Root } from 'type-graphql';
 
 import Post from './Post';
 import Comment from './Comment';
@@ -74,6 +74,19 @@ class Profile extends BaseEntity {
     cascade: ['insert', 'update'],
   })
   receivedFriendships: Friendship[];
+
+  @Field(() => [Profile])
+  friends(@Root() root: Profile): Profile[] {
+    const requestedFriendships = root.requestedFriendships
+      .filter(({ isAccepted }) => isAccepted)
+      .map(({ addressedTo }) => addressedTo);
+    const receivedFriendships = root.receivedFriendships
+      .filter(({ isAccepted }) => isAccepted)
+      .map(({ requestedBy }) => requestedBy);
+    return [...requestedFriendships, ...receivedFriendships].sort((a, b) =>
+      a.user.fullName > b.user.fullName ? -1 : 1,
+    );
+  }
 }
 
 export default Profile;

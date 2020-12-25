@@ -17,12 +17,18 @@ class LikePost {
     const { profileId } = ctx;
 
     const profile = await Profile.findOne(profileId, {
-      relations: ['likedPosts', 'dislikedPosts'],
+      relations: [
+        'posts',
+        'likedPosts',
+        'dislikedPosts',
+        'likedPosts.author',
+        'dislikedPosts.author',
+      ],
     });
     if (!profile) throw new Error('Profile not found');
 
     const post = await Post.findOne(id, {
-      relations: ['likedBy', 'dislikedBy'],
+      relations: ['likedBy', 'dislikedBy', 'author'],
     });
     if (!post) throw new Error('Post not found!');
 

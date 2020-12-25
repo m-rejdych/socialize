@@ -15,10 +15,16 @@ mutation LikePost($data: LikePostInput!) {
       id
       posts {
         id
-        likedBy {
+      }
+      likedPosts {
+        id
+        author {
           id
         }
-        dislikedBy {
+      }
+      dislikedPosts {
+        id
+        author {
           id
         }
       }

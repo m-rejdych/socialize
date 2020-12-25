@@ -9,5 +9,80 @@ query Profile($id: ID) {
       fullName
       userName
     }
+    posts {
+      id
+      content
+      createdAt
+      likes
+      dislikes
+      author {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+      likedBy {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+      dislikedBy {
+        id
+        user {
+          id
+          fullName
+        }
+      }
+      comments {
+        id
+        content
+        createdAt
+        likes
+        dislikes
+        author {
+          id
+          user {
+            id
+            fullName
+          }
+        }
+        likedBy {
+          id
+          user {
+            id
+            fullName
+          }
+        }
+        dislikedBy {
+          id
+          user {
+            id
+            fullName
+          }
+        }
+      }
+    }
+    likedPosts {
+      id
+      author {
+        id
+      }
+    }
+    dislikedPosts {
+      id
+      author {
+        id
+      }
+    }
+    friends {
+      id
+      user {
+        id
+        fullName
+      }
+    }
   }
 }
