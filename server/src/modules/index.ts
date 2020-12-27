@@ -21,6 +21,7 @@ import UpdateProfile from './profile/mutation/UpdateProfile';
 import CreateFriendship from './friendship/mutation/createFriendship';
 import AcceptFriendship from './friendship/mutation/acceptFriendship';
 import CreateChat from './chat/mutation/createChat';
+import DeleteChat from './chat/mutation/deleteChat';
 
 const resolvers = [
   Register,
@@ -46,6 +47,7 @@ const resolvers = [
   CreateFriendship,
   AcceptFriendship,
   CreateChat,
+  DeleteChat,
 ] as const;
 
 export default resolvers;

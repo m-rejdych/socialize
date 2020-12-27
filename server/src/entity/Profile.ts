@@ -108,6 +108,11 @@ class Profile extends BaseEntity {
   @Field(() => [Message], { nullable: true })
   messages: Message[];
 
+  @ManyToMany(() => Message, (message) => message.readBy, {
+    cascade: ['insert', 'update'],
+  })
+  readMessages: Message[];
+
   @Field(() => [Profile])
   friends(@Root() root: Profile): Profile[] {
     const requestedFriendships = root.requestedFriendships

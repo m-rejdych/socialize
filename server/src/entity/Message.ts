@@ -5,6 +5,8 @@ import {
   CreateDateColumn,
   ManyToOne,
   BaseEntity,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 
@@ -35,6 +37,13 @@ class Message extends BaseEntity {
   })
   @Field(() => Chat)
   chat: Chat;
+
+  @ManyToMany(() => Profile, (profile) => profile.readMessages, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinTable()
+  readBy: Profile[];
 
   @Column()
   @Field()
