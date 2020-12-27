@@ -5,6 +5,7 @@ import {
   ManyToMany,
   OneToMany,
   JoinTable,
+  BaseEntity,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 
@@ -13,7 +14,7 @@ import Message from './Message';
 
 @Entity()
 @ObjectType()
-class Chat {
+class Chat extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => ID)
   id: string;
@@ -32,8 +33,9 @@ class Chat {
 
   @OneToMany(() => Message, (message) => message.chat, {
     cascade: ['insert', 'update'],
+    nullable: true,
   })
-  @Field(() => [Message])
+  @Field(() => [Message], { nullable: true })
   messages: Message[];
 }
 

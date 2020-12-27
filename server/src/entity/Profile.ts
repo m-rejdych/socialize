@@ -96,14 +96,16 @@ class Profile extends BaseEntity {
 
   @ManyToMany(() => Chat, (chat) => chat.members, {
     cascade: ['insert', 'update'],
+    nullable: true,
   })
-  @Field(() => [Chat])
+  @Field(() => [Chat], { nullable: true })
   chats: Chat[];
 
   @OneToMany(() => Message, (message) => message.author, {
     cascade: ['insert', 'update'],
+    nullable: true,
   })
-  @Field(() => [Message])
+  @Field(() => [Message], { nullable: true })
   messages: Message[];
 
   @Field(() => [Profile])

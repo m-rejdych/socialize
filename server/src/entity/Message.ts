@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   ManyToOne,
+  BaseEntity,
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 
@@ -12,7 +13,7 @@ import Profile from './Profile';
 
 @Entity()
 @ObjectType()
-class Message {
+class Message extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => ID)
   id: string;

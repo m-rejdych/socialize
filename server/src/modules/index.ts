@@ -20,6 +20,7 @@ import Feed from './profile/query/feed';
 import UpdateProfile from './profile/mutation/UpdateProfile';
 import CreateFriendship from './friendship/mutation/createFriendship';
 import AcceptFriendship from './friendship/mutation/acceptFriendship';
+import CreateChat from './chat/mutation/createChat';
 
 const resolvers = [
   Register,
@@ -44,6 +45,7 @@ const resolvers = [
   UpdateProfile,
   CreateFriendship,
   AcceptFriendship,
+  CreateChat,
 ] as const;
 
 export default resolvers;
