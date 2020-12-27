@@ -14,6 +14,8 @@ import Post from './Post';
 import Comment from './Comment';
 import User from './User';
 import Friendship from './Friendship';
+import Chat from './Chat';
+import Message from './Message';
 
 @Entity()
 @ObjectType()
@@ -91,6 +93,18 @@ class Profile extends BaseEntity {
     cascade: ['insert', 'update'],
   })
   receivedFriendships: Friendship[];
+
+  @ManyToMany(() => Chat, (chat) => chat.members, {
+    cascade: ['insert', 'update'],
+  })
+  @Field(() => [Chat])
+  chats: Chat[];
+
+  @OneToMany(() => Message, (message) => message.author, {
+    cascade: ['insert', 'update'],
+  })
+  @Field(() => [Message])
+  messages: Message[];
 
   @Field(() => [Profile])
   friends(@Root() root: Profile): Profile[] {
