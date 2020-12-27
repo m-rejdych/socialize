@@ -84,6 +84,10 @@ export type User = {
 export type Profile = {
   __typename?: 'Profile';
   id: Scalars['ID'];
+  phoneNumber?: Maybe<Scalars['Int']>;
+  country?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  relationship?: Maybe<Scalars['String']>;
   user: User;
   posts?: Maybe<Array<Post>>;
   comments?: Maybe<Array<Comment>>;
@@ -132,6 +136,7 @@ export type Mutation = {
   createComment: CreateCommentResponse;
   deleteComment: DeleteCommentResponse;
   likeComment: LikeCommentResponse;
+  updateProfile: Profile;
   createFriendship: Friendship;
   acceptFriendship: Friendship;
 };
@@ -179,6 +184,11 @@ export type MutationDeleteCommentArgs = {
 
 export type MutationLikeCommentArgs = {
   data: LikeCommentInput;
+};
+
+
+export type MutationUpdateProfileArgs = {
+  data: UpdateProfileInput;
 };
 
 
@@ -258,6 +268,14 @@ export type LikeCommentResponse = {
 export type LikeCommentInput = {
   id: Scalars['ID'];
   isLiked: Scalars['Boolean'];
+};
+
+export type UpdateProfileInput = {
+  id: Scalars['ID'];
+  phoneNumber?: Maybe<Scalars['Int']>;
+  country?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
+  relationship?: Maybe<Scalars['String']>;
 };
 
 export type Friendship = {
@@ -492,6 +510,19 @@ export type LikePostMutation = (
   ) }
 );
 
+export type UpdateProfileMutationVariables = Exact<{
+  data: UpdateProfileInput;
+}>;
+
+
+export type UpdateProfileMutation = (
+  { __typename?: 'Mutation' }
+  & { updateProfile: (
+    { __typename?: 'Profile' }
+    & Pick<Profile, 'id' | 'phoneNumber' | 'country' | 'city' | 'relationship'>
+  ) }
+);
+
 export type LoginMutationVariables = Exact<{
   data: LoginInput;
 }>;
@@ -674,7 +705,7 @@ export type ProfileQuery = (
   { __typename?: 'Query' }
   & { profile: (
     { __typename?: 'Profile' }
-    & Pick<Profile, 'id'>
+    & Pick<Profile, 'id' | 'phoneNumber' | 'country' | 'city' | 'relationship'>
     & { user: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'fullName' | 'userName'>
@@ -1106,6 +1137,42 @@ export function useLikePostMutation(baseOptions?: Apollo.MutationHookOptions<Lik
 export type LikePostMutationHookResult = ReturnType<typeof useLikePostMutation>;
 export type LikePostMutationResult = Apollo.MutationResult<LikePostMutation>;
 export type LikePostMutationOptions = Apollo.BaseMutationOptions<LikePostMutation, LikePostMutationVariables>;
+export const UpdateProfileDocument = gql`
+    mutation UpdateProfile($data: UpdateProfileInput!) {
+  updateProfile(data: $data) {
+    id
+    phoneNumber
+    country
+    city
+    relationship
+  }
+}
+    `;
+export type UpdateProfileMutationFn = Apollo.MutationFunction<UpdateProfileMutation, UpdateProfileMutationVariables>;
+
+/**
+ * __useUpdateProfileMutation__
+ *
+ * To run a mutation, you first call `useUpdateProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProfileMutation, { data, loading, error }] = useUpdateProfileMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUpdateProfileMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProfileMutation, UpdateProfileMutationVariables>) {
+        return Apollo.useMutation<UpdateProfileMutation, UpdateProfileMutationVariables>(UpdateProfileDocument, baseOptions);
+      }
+export type UpdateProfileMutationHookResult = ReturnType<typeof useUpdateProfileMutation>;
+export type UpdateProfileMutationResult = Apollo.MutationResult<UpdateProfileMutation>;
+export type UpdateProfileMutationOptions = Apollo.BaseMutationOptions<UpdateProfileMutation, UpdateProfileMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($data: LoginInput!) {
   login(data: $data) {
@@ -1403,6 +1470,10 @@ export const ProfileDocument = gql`
     query Profile($id: ID) {
   profile(id: $id) {
     id
+    phoneNumber
+    country
+    city
+    relationship
     user {
       id
       email

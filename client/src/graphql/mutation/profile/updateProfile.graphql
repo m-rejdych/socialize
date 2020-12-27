@@ -1,0 +1,9 @@
+mutation UpdateProfile($data: UpdateProfileInput!) {
+  updateProfile(data: $data) {
+    id
+    phoneNumber
+    country
+    city
+    relationship
+  }
+}

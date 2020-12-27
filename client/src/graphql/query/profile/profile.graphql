@@ -1,6 +1,10 @@
 query Profile($id: ID) {
   profile(id: $id) {
     id
+    phoneNumber
+    country
+    city
+    relationship
     user {
       id
       email

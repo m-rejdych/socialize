@@ -6,8 +6,9 @@ import {
   OneToOne,
   ManyToMany,
   JoinColumn,
+  Column,
 } from 'typeorm';
-import { ObjectType, Field, ID, Root } from 'type-graphql';
+import { ObjectType, Field, ID, Root, Int } from 'type-graphql';
 
 import Post from './Post';
 import Comment from './Comment';
@@ -20,6 +21,22 @@ class Profile extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => ID)
   id: string;
+
+  @Column({ nullable: true })
+  @Field(() => Int, { nullable: true })
+  phoneNumber: number;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  country: string;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  city: string;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  relationship: string;
 
   @OneToOne(() => User, (user) => user.profile, {
     cascade: true,

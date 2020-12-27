@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Box,
   Container,
@@ -8,6 +9,7 @@ import {
   Grid,
   Paper,
   Divider,
+  Button,
 } from '@material-ui/core';
 import { useParams, useHistory } from 'react-router-dom';
 import { useReactiveVar } from '@apollo/client';
@@ -16,6 +18,7 @@ import { useProfileQuery } from '../../generated/graphql';
 import { userVar } from 'src/graphql/reactiveVariables/user';
 import Post from '../../components/Post';
 import PostInput from '../../components/PostInput';
+import EditProfileDialog from '../../components/EditProfileDialog';
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -47,15 +50,23 @@ const Profile: React.FC = () => {
   const classes = useStyles();
   const history = useHistory();
   const user = useReactiveVar(userVar);
+  const [open, setOpen] = useState(false);
   const { id } = useParams<{ id: string }>();
   const { data, loading } = useProfileQuery({ variables: { id } });
 
   if (data?.profile) {
     const {
+      id: profileId,
       user: { firstName, fullName, email },
       posts,
       friends,
+      phoneNumber,
+      country,
+      city,
+      relationship,
     } = data.profile;
+
+    const isMe = user?.profile.id === profileId;
 
     const fields = [
       {
@@ -64,19 +75,19 @@ const Profile: React.FC = () => {
       },
       {
         label: 'Phone number',
-        value: 23424234,
+        value: phoneNumber,
       },
       {
         label: 'Country',
-        value: 'Poland',
+        value: country,
       },
       {
         label: 'City',
-        value: 'Cracow',
+        value: city,
       },
       {
         label: 'Relationship',
-        value: 'Single',
+        value: relationship,
       },
     ];
 
@@ -87,6 +98,10 @@ const Profile: React.FC = () => {
 
     const goToProfile = (id: string): void => {
       history.push(`/profile/${id}`);
+    };
+
+    const toggleDialog = (): void => {
+      setOpen((prev) => !prev);
     };
 
     return (
@@ -100,20 +115,33 @@ const Profile: React.FC = () => {
           </Box>
           <Grid container spacing={3} justify="center">
             <Grid item xs={5}>
-              <Typography
-                variant="h5"
-                gutterBottom
-                className={classes.fontBold}
-              >
-                Info
-              </Typography>
+              <Box display="flex" justifyContent="space-between">
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  className={classes.fontBold}
+                >
+                  Info
+                </Typography>
+                {isMe && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={toggleDialog}
+                  >
+                    Edit info
+                  </Button>
+                )}
+              </Box>
               <Box mb={4}>
                 {fields.map(({ label, value }) => (
                   <Box key={label} mb={2}>
                     <Typography className={classes.fontBold}>
                       {label}
                     </Typography>
-                    <Typography>{value}</Typography>
+                    <Typography color={value ? 'textPrimary' : 'textSecondary'}>
+                      {value || 'Unknown'}
+                    </Typography>
                   </Box>
                 ))}
               </Box>
@@ -172,6 +200,15 @@ const Profile: React.FC = () => {
             </Grid>
           </Grid>
         </Box>
+        <EditProfileDialog
+          id={id}
+          open={open}
+          handleClose={toggleDialog}
+          phoneNumber={phoneNumber}
+          country={country}
+          city={city}
+          relationship={relationship}
+        />
       </Container>
     );
   }
