@@ -22,6 +22,8 @@ import CreateFriendship from './friendship/mutation/createFriendship';
 import AcceptFriendship from './friendship/mutation/acceptFriendship';
 import CreateChat from './chat/mutation/createChat';
 import DeleteChat from './chat/mutation/deleteChat';
+import UpdateChatName from './chat/mutation/updateChatName';
+import AddRemoveChatMember from './chat/mutation/addRemoveChatMember';
 
 const resolvers = [
   Register,
@@ -48,6 +50,8 @@ const resolvers = [
   AcceptFriendship,
   CreateChat,
   DeleteChat,
+  UpdateChatName,
+  AddRemoveChatMember,
 ] as const;
 
 export default resolvers;

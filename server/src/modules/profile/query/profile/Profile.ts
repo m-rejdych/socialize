@@ -38,6 +38,7 @@ const relations = [
   'receivedFriendships.requestedBy',
   'receivedFriendships.requestedBy.user',
   'chats',
+  'chats.members',
 ];
 
 @Resolver()
