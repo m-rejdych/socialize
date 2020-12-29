@@ -24,6 +24,7 @@ import CreateChat from './chat/mutation/createChat';
 import DeleteChat from './chat/mutation/deleteChat';
 import UpdateChatName from './chat/mutation/updateChatName';
 import AddRemoveChatMember from './chat/mutation/addRemoveChatMember';
+import Chat from './chat/query/chat';
 
 const resolvers = [
   Register,
@@ -52,6 +53,7 @@ const resolvers = [
   DeleteChat,
   UpdateChatName,
   AddRemoveChatMember,
+  Chat,
 ] as const;
 
 export default resolvers;
