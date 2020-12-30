@@ -43,6 +43,7 @@ class Message extends BaseEntity {
     onDelete: 'CASCADE',
   })
   @JoinTable()
+  @Field(() => [Profile])
   readBy: Profile[];
 
   @Column()
