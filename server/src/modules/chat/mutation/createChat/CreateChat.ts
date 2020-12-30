@@ -27,7 +27,7 @@ class CreateChat {
     if (!profile) throw new Error('Profile not found!');
 
     if (ids.length < 2)
-      throw new Error("There should be at least 2 chat's members");
+      throw new Error("There should be at least 2 chat members");
     if (profileId && !ids.includes(profileId)) throw new ForbiddenError();
 
     const members = await Profile.findByIds(ids);
