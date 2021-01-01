@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import jwt from 'express-jwt';
+import http from 'http';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
 import { createConnection } from 'typeorm';
@@ -28,14 +29,21 @@ const main = async (): Promise<void> => {
 
   const server = new ApolloServer({
     schema,
-    context: ({ req }) => ({
-      userId: (req as ExtendedRequest).user?.userId,
-      profileId: (req as ExtendedRequest).user?.profileId,
-    }),
+    context: ({ req, connection }) => {
+      if (connection) return connection.context;
+      else
+        return {
+          userId: (req as ExtendedRequest).user?.userId,
+          profileId: (req as ExtendedRequest).user?.profileId,
+        };
+    },
   });
   server.applyMiddleware({ app, cors: false });
 
-  app.listen({ path: API_URI, port: PORT }, () =>
+  const httpServer = http.createServer(app);
+  server.installSubscriptionHandlers(httpServer);
+
+  httpServer.listen({ path: API_URI, port: PORT }, () =>
     console.log(`Server started at http://localhost:${PORT}${API_URI}`),
   );
 };

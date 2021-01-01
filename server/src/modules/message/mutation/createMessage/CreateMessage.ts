@@ -5,6 +5,8 @@ import {
   Authorized,
   Ctx,
   ForbiddenError,
+  PubSub,
+  Publisher,
 } from 'type-graphql';
 
 import Message from '../../../../entity/Message';
@@ -13,6 +15,7 @@ import Profile from '../../../../entity/Profile';
 import Context from '../../../../types/Context';
 import CreateMessageResponse from './CreateMessageResponse';
 import CreateMessageInput from './CreateMessageInput';
+import NewMessagePayload from '../../subscription/newMessage/NewMessagePayload';
 
 @Resolver()
 class CreateMessage {
@@ -21,6 +24,7 @@ class CreateMessage {
   async createMessage(
     @Arg('data') { chatId, content }: CreateMessageInput,
     @Ctx() ctx: Context,
+    @PubSub('MESSAGE') publish: Publisher<NewMessagePayload>,
   ): Promise<CreateMessageResponse> {
     const { profileId } = ctx;
 
@@ -28,7 +32,7 @@ class CreateMessage {
     if (!profile) throw new Error('Profile not found!');
 
     const chat = await Chat.findOne(chatId, {
-      relations: ['members', 'messages'],
+      relations: ['members', 'members.user', 'messages'],
     });
     if (!chat) throw new Error('Chat not found!');
     if (!chat.members.some(({ id }) => id === profileId))
@@ -41,6 +45,7 @@ class CreateMessage {
       author: profile,
     });
     await message.save();
+    await publish({ messageId: message.id });
 
     return {
       chat,

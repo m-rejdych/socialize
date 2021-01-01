@@ -28,6 +28,8 @@ import Chat from './chat/query/chat';
 import CreateMessage from './message/mutation/createMessage';
 import DeleteMessage from './message/mutation/deleteMessage';
 import MarkAsRead from './message/mutation/markAsRead';
+import Message from './message/query/message';
+import NewMessage from './message/subscription/newMessage';
 
 const resolvers = [
   Register,
@@ -60,6 +62,8 @@ const resolvers = [
   CreateMessage,
   DeleteMessage,
   MarkAsRead,
+  Message,
+  NewMessage,
 ] as const;
 
 export default resolvers;

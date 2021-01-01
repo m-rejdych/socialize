@@ -30,7 +30,7 @@ class DeleteMessage {
     const message = await Message.findOne(id, {
       relations: ['author', 'chat'],
     });
-    if (!message) throw new Error('Profile not found!');
+    if (!message) throw new Error('Message not found!');
     if (message.author.id !== profileId) throw new ForbiddenError();
 
     const chat = await Chat.findOne(message.chat.id, {
