@@ -15,6 +15,7 @@ import Comment from './comment/query/comment';
 import Comments from './comment/query/comments';
 import ProfileComments from './comment/query/profileComments';
 import Profile from './profile/query/profile';
+import Profiles from './profile/query/profiles';
 import Friends from './profile/query/friends';
 import Feed from './profile/query/feed';
 import UpdateProfile from './profile/mutation/UpdateProfile';
@@ -50,6 +51,7 @@ const resolvers = [
   Comments,
   ProfileComments,
   Profile,
+  Profiles,
   Friends,
   Feed,
   UpdateProfile,
