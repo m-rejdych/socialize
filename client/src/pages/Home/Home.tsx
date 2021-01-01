@@ -3,6 +3,7 @@ import { Grid, Box, CircularProgress } from '@material-ui/core';
 
 import Feed from '../../components/Feed';
 import Dashboard from '../../components/Dashboard';
+import Messages from '../../components/Messages';
 import { useUserQuery } from '../../generated/graphql';
 
 const Home: React.FC = () => {
@@ -11,6 +12,12 @@ const Home: React.FC = () => {
   const [articlesActive, setArticlesActive] = useState(false);
   const [searchActive, setSearchActive] = useState(false);
   const { loading } = useUserQuery();
+
+  const renderContent = (): JSX.Element | null => {
+    if (homeActive) return <Feed />;
+    if (messagesActive) return <Messages />;
+    return null;
+  };
 
   return (
     <Box minHeight="100vh" p={3}>
@@ -38,7 +45,7 @@ const Home: React.FC = () => {
             />
           </Grid>
           <Grid item xs={6}>
-            <Feed />
+            {renderContent()}
           </Grid>
           <Grid item xs={2} />
         </Grid>

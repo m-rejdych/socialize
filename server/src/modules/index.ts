@@ -29,6 +29,7 @@ import CreateMessage from './message/mutation/createMessage';
 import DeleteMessage from './message/mutation/deleteMessage';
 import MarkAsRead from './message/mutation/markAsRead';
 import Message from './message/query/message';
+import Messages from './message/query/messages';
 import NewMessage from './message/subscription/newMessage';
 
 const resolvers = [
@@ -63,6 +64,7 @@ const resolvers = [
   DeleteMessage,
   MarkAsRead,
   Message,
+  Messages,
   NewMessage,
 ] as const;
 
