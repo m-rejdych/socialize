@@ -4,6 +4,7 @@ import { Grid, Box, CircularProgress } from '@material-ui/core';
 import Feed from '../../components/Feed';
 import Dashboard from '../../components/Dashboard';
 import Messages from '../../components/Messages';
+import Search from '../../components/Search';
 import { useUserQuery } from '../../generated/graphql';
 
 const Home: React.FC = () => {
@@ -16,6 +17,7 @@ const Home: React.FC = () => {
   const renderContent = (): JSX.Element | null => {
     if (homeActive) return <Feed />;
     if (messagesActive) return <Messages />;
+    if (searchActive) return <Search />;
     return null;
   };
 

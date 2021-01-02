@@ -25,8 +25,12 @@ export type Query = {
   comments: Array<Comment>;
   profileComments: Array<Comment>;
   profile: Profile;
+  profiles: Array<Profile>;
   friends: Array<Profile>;
   feed: Array<Post>;
+  chat: Chat;
+  message: Message;
+  messages?: Maybe<Array<Message>>;
 };
 
 
@@ -69,6 +73,21 @@ export type QueryProfileArgs = {
   id?: Maybe<Scalars['ID']>;
 };
 
+
+export type QueryChatArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryMessageArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryMessagesArgs = {
+  chatId: Scalars['ID'];
+};
+
 export type User = {
   __typename?: 'User';
   id: Scalars['ID'];
@@ -95,6 +114,8 @@ export type Profile = {
   dislikedPosts?: Maybe<Array<Post>>;
   likedComments?: Maybe<Array<Comment>>;
   dislikedComments?: Maybe<Array<Comment>>;
+  chats?: Maybe<Array<Chat>>;
+  messages?: Maybe<Array<Message>>;
   friends: Array<Profile>;
 };
 
@@ -125,6 +146,24 @@ export type Comment = {
   dislikedBy?: Maybe<Array<Profile>>;
 };
 
+export type Chat = {
+  __typename?: 'Chat';
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  members: Array<Profile>;
+  messages?: Maybe<Array<Message>>;
+};
+
+export type Message = {
+  __typename?: 'Message';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  author: Profile;
+  chat: Chat;
+  readBy: Array<Profile>;
+  content: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   register: UserMutationResponse;
@@ -139,6 +178,13 @@ export type Mutation = {
   updateProfile: Profile;
   createFriendship: Friendship;
   acceptFriendship: Friendship;
+  createChat: CreateChatResponse;
+  deleteChat: DeleteChatResponse;
+  updateChatName: Chat;
+  addRemoveChatMember: AddRemoveChatMemberResponse;
+  createMessage: CreateMessageResponse;
+  deleteMessage: DeleteMessageResponse;
+  markAsRead: MarkAsReadResponse;
 };
 
 
@@ -198,6 +244,41 @@ export type MutationCreateFriendshipArgs = {
 
 
 export type MutationAcceptFriendshipArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationCreateChatArgs = {
+  ids: Array<Scalars['ID']>;
+};
+
+
+export type MutationDeleteChatArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationUpdateChatNameArgs = {
+  data: UpdateChatNameInput;
+};
+
+
+export type MutationAddRemoveChatMemberArgs = {
+  data: AddRemoveChatMemberInput;
+};
+
+
+export type MutationCreateMessageArgs = {
+  data: CreateMessageInput;
+};
+
+
+export type MutationDeleteMessageArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationMarkAsReadArgs = {
   id: Scalars['ID'];
 };
 
@@ -285,6 +366,74 @@ export type Friendship = {
   addressedTo: Profile;
   isAccepted: Scalars['Boolean'];
   friendsFrom: Scalars['DateTime'];
+};
+
+export type CreateChatResponse = {
+  __typename?: 'CreateChatResponse';
+  chat: Chat;
+  members: Array<Profile>;
+};
+
+export type DeleteChatResponse = {
+  __typename?: 'DeleteChatResponse';
+  chatId: Scalars['String'];
+  members: Array<Profile>;
+};
+
+export type UpdateChatNameInput = {
+  id: Scalars['ID'];
+  name: Scalars['String'];
+};
+
+export type AddRemoveChatMemberResponse = {
+  __typename?: 'AddRemoveChatMemberResponse';
+  chat: Chat;
+  profile: Profile;
+};
+
+export type AddRemoveChatMemberInput = {
+  chatId: Scalars['ID'];
+  profileId: Scalars['ID'];
+  toRemove?: Maybe<Scalars['Boolean']>;
+};
+
+export type CreateMessageResponse = {
+  __typename?: 'CreateMessageResponse';
+  message: Message;
+  chat: Chat;
+};
+
+export type CreateMessageInput = {
+  chatId: Scalars['ID'];
+  content: Scalars['String'];
+};
+
+export type DeleteMessageResponse = {
+  __typename?: 'DeleteMessageResponse';
+  chat: Chat;
+  messageId: Scalars['ID'];
+};
+
+export type MarkAsReadResponse = {
+  __typename?: 'MarkAsReadResponse';
+  profile: Profile;
+  message: Message;
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  newMessage: NewMessageResponse;
+};
+
+
+export type SubscriptionNewMessageArgs = {
+  chatId: Scalars['ID'];
+};
+
+export type NewMessageResponse = {
+  __typename?: 'NewMessageResponse';
+  chat: Chat;
+  message: Message;
 };
 
 export type CreateCommentMutationVariables = Exact<{
@@ -782,6 +931,21 @@ export type ProfileQuery = (
       ) }
     )> }
   ) }
+);
+
+export type ProfilesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ProfilesQuery = (
+  { __typename?: 'Query' }
+  & { profiles: Array<(
+    { __typename?: 'Profile' }
+    & Pick<Profile, 'id'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'fullName'>
+    ) }
+  )> }
 );
 
 export type UserQueryVariables = Exact<{
@@ -1586,6 +1750,41 @@ export function useProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Pr
 export type ProfileQueryHookResult = ReturnType<typeof useProfileQuery>;
 export type ProfileLazyQueryHookResult = ReturnType<typeof useProfileLazyQuery>;
 export type ProfileQueryResult = Apollo.QueryResult<ProfileQuery, ProfileQueryVariables>;
+export const ProfilesDocument = gql`
+    query Profiles {
+  profiles {
+    id
+    user {
+      fullName
+    }
+  }
+}
+    `;
+
+/**
+ * __useProfilesQuery__
+ *
+ * To run a query within a React component, call `useProfilesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProfilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProfilesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useProfilesQuery(baseOptions?: Apollo.QueryHookOptions<ProfilesQuery, ProfilesQueryVariables>) {
+        return Apollo.useQuery<ProfilesQuery, ProfilesQueryVariables>(ProfilesDocument, baseOptions);
+      }
+export function useProfilesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProfilesQuery, ProfilesQueryVariables>) {
+          return Apollo.useLazyQuery<ProfilesQuery, ProfilesQueryVariables>(ProfilesDocument, baseOptions);
+        }
+export type ProfilesQueryHookResult = ReturnType<typeof useProfilesQuery>;
+export type ProfilesLazyQueryHookResult = ReturnType<typeof useProfilesLazyQuery>;
+export type ProfilesQueryResult = Apollo.QueryResult<ProfilesQuery, ProfilesQueryVariables>;
 export const UserDocument = gql`
     query User($id: ID) {
   user(id: $id) {
