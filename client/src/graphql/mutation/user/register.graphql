@@ -11,10 +11,23 @@ mutation Register($data: RegisterInput!) {
       profile {
         id
         allFriends {
-          id
+          profile {
+            id
+          }
+          friendship {
+            id
+            isAccepted
+          }
+          requestedByMe
         }
         acceptedFriends {
-          id
+          profile {
+            id
+          }
+          friendship {
+            id
+            isAccepted
+          }
         }
       }
     }

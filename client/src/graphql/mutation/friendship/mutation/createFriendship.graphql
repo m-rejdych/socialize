@@ -1,0 +1,14 @@
+mutation CreateFriendship($addressedToId: ID!) {
+  createFriendship(addressedToId: $addressedToId) {
+    friendship {
+      id
+      isAccepted
+    }
+    profile {
+      id
+    }
+    friendProfile {
+      id
+    }
+  }
+}

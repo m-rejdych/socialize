@@ -35,7 +35,7 @@ const Friends: React.FC = () => {
 
     return (
       <List title="Friends">
-        {acceptedFriends.map(({ id, user: { fullName } }) => (
+        {acceptedFriends.map(({ profile: { id, user: { fullName } } }) => (
           <ListItem
             key={id}
             button

@@ -116,8 +116,8 @@ export type Profile = {
   dislikedComments?: Maybe<Array<Comment>>;
   chats?: Maybe<Array<Chat>>;
   messages?: Maybe<Array<Message>>;
-  acceptedFriends: Array<Profile>;
-  allFriends: Array<Profile>;
+  allFriends: Array<AllFriendsResponse>;
+  acceptedFriends: Array<AcceptedFriendsResponse>;
 };
 
 export type Post = {
@@ -165,6 +165,28 @@ export type Message = {
   content: Scalars['String'];
 };
 
+export type AllFriendsResponse = {
+  __typename?: 'AllFriendsResponse';
+  profile: Profile;
+  friendship: Friendship;
+  requestedByMe: Scalars['Boolean'];
+};
+
+export type Friendship = {
+  __typename?: 'Friendship';
+  id: Scalars['ID'];
+  requestedBy: Profile;
+  addressedTo: Profile;
+  isAccepted: Scalars['Boolean'];
+  friendsFrom: Scalars['DateTime'];
+};
+
+export type AcceptedFriendsResponse = {
+  __typename?: 'AcceptedFriendsResponse';
+  profile: Profile;
+  friendship: Friendship;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   register: UserMutationResponse;
@@ -177,8 +199,9 @@ export type Mutation = {
   deleteComment: DeleteCommentResponse;
   likeComment: LikeCommentResponse;
   updateProfile: Profile;
-  createFriendship: Friendship;
+  createFriendship: CreateFriendshipResponse;
   acceptFriendship: Friendship;
+  deleteFriendship: DeleteFriendshipResponse;
   createChat: CreateChatResponse;
   deleteChat: DeleteChatResponse;
   updateChatName: Chat;
@@ -245,6 +268,11 @@ export type MutationCreateFriendshipArgs = {
 
 
 export type MutationAcceptFriendshipArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteFriendshipArgs = {
   id: Scalars['ID'];
 };
 
@@ -360,13 +388,18 @@ export type UpdateProfileInput = {
   relationship?: Maybe<Scalars['String']>;
 };
 
-export type Friendship = {
-  __typename?: 'Friendship';
-  id: Scalars['ID'];
-  requestedBy: Profile;
-  addressedTo: Profile;
-  isAccepted: Scalars['Boolean'];
-  friendsFrom: Scalars['DateTime'];
+export type CreateFriendshipResponse = {
+  __typename?: 'CreateFriendshipResponse';
+  friendship: Friendship;
+  profile: Profile;
+  friendProfile: Profile;
+};
+
+export type DeleteFriendshipResponse = {
+  __typename?: 'DeleteFriendshipResponse';
+  friendshipId: Scalars['ID'];
+  profile: Profile;
+  friendProfile: Profile;
 };
 
 export type CreateChatResponse = {
@@ -521,6 +554,61 @@ export type LikeCommentMutation = (
         { __typename?: 'Profile' }
         & Pick<Profile, 'id'>
       )>> }
+    ) }
+  ) }
+);
+
+export type AcceptFriendshipMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type AcceptFriendshipMutation = (
+  { __typename?: 'Mutation' }
+  & { acceptFriendship: (
+    { __typename?: 'Friendship' }
+    & Pick<Friendship, 'id' | 'isAccepted'>
+  ) }
+);
+
+export type CreateFriendshipMutationVariables = Exact<{
+  addressedToId: Scalars['ID'];
+}>;
+
+
+export type CreateFriendshipMutation = (
+  { __typename?: 'Mutation' }
+  & { createFriendship: (
+    { __typename?: 'CreateFriendshipResponse' }
+    & { friendship: (
+      { __typename?: 'Friendship' }
+      & Pick<Friendship, 'id' | 'isAccepted'>
+    ), profile: (
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id'>
+    ), friendProfile: (
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id'>
+    ) }
+  ) }
+);
+
+export type DeleteFriendshipMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteFriendshipMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteFriendship: (
+    { __typename?: 'DeleteFriendshipResponse' }
+    & Pick<DeleteFriendshipResponse, 'friendshipId'>
+    & { profile: (
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id'>
+    ), friendProfile: (
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id'>
     ) }
   ) }
 );
@@ -690,11 +778,24 @@ export type LoginMutation = (
         { __typename?: 'Profile' }
         & Pick<Profile, 'id'>
         & { allFriends: Array<(
-          { __typename?: 'Profile' }
-          & Pick<Profile, 'id'>
+          { __typename?: 'AllFriendsResponse' }
+          & Pick<AllFriendsResponse, 'requestedByMe'>
+          & { profile: (
+            { __typename?: 'Profile' }
+            & Pick<Profile, 'id'>
+          ), friendship: (
+            { __typename?: 'Friendship' }
+            & Pick<Friendship, 'id' | 'isAccepted'>
+          ) }
         )>, acceptedFriends: Array<(
-          { __typename?: 'Profile' }
-          & Pick<Profile, 'id'>
+          { __typename?: 'AcceptedFriendsResponse' }
+          & { profile: (
+            { __typename?: 'Profile' }
+            & Pick<Profile, 'id'>
+          ), friendship: (
+            { __typename?: 'Friendship' }
+            & Pick<Friendship, 'id' | 'isAccepted'>
+          ) }
         )> }
       ) }
     ) }
@@ -718,11 +819,24 @@ export type RegisterMutation = (
         { __typename?: 'Profile' }
         & Pick<Profile, 'id'>
         & { allFriends: Array<(
-          { __typename?: 'Profile' }
-          & Pick<Profile, 'id'>
+          { __typename?: 'AllFriendsResponse' }
+          & Pick<AllFriendsResponse, 'requestedByMe'>
+          & { profile: (
+            { __typename?: 'Profile' }
+            & Pick<Profile, 'id'>
+          ), friendship: (
+            { __typename?: 'Friendship' }
+            & Pick<Friendship, 'id' | 'isAccepted'>
+          ) }
         )>, acceptedFriends: Array<(
-          { __typename?: 'Profile' }
-          & Pick<Profile, 'id'>
+          { __typename?: 'AcceptedFriendsResponse' }
+          & { profile: (
+            { __typename?: 'Profile' }
+            & Pick<Profile, 'id'>
+          ), friendship: (
+            { __typename?: 'Friendship' }
+            & Pick<Friendship, 'id' | 'isAccepted'>
+          ) }
         )> }
       ) }
     ) }
@@ -938,11 +1052,27 @@ export type ProfileQuery = (
         & Pick<Profile, 'id'>
       ) }
     )>>, acceptedFriends: Array<(
-      { __typename?: 'Profile' }
-      & Pick<Profile, 'id'>
-      & { user: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'fullName'>
+      { __typename?: 'AcceptedFriendsResponse' }
+      & { profile: (
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+        & { user: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'fullName'>
+        ) }
+      ), friendship: (
+        { __typename?: 'Friendship' }
+        & Pick<Friendship, 'id'>
+      ) }
+    )>, allFriends: Array<(
+      { __typename?: 'AllFriendsResponse' }
+      & Pick<AllFriendsResponse, 'requestedByMe'>
+      & { profile: (
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+      ), friendship: (
+        { __typename?: 'Friendship' }
+        & Pick<Friendship, 'id' | 'isAccepted'>
       ) }
     )> }
   ) }
@@ -977,11 +1107,24 @@ export type UserQuery = (
       { __typename?: 'Profile' }
       & Pick<Profile, 'id'>
       & { allFriends: Array<(
-        { __typename?: 'Profile' }
-        & Pick<Profile, 'id'>
+        { __typename?: 'AllFriendsResponse' }
+        & Pick<AllFriendsResponse, 'requestedByMe'>
+        & { profile: (
+          { __typename?: 'Profile' }
+          & Pick<Profile, 'id'>
+        ), friendship: (
+          { __typename?: 'Friendship' }
+          & Pick<Friendship, 'id' | 'isAccepted'>
+        ) }
       )>, acceptedFriends: Array<(
-        { __typename?: 'Profile' }
-        & Pick<Profile, 'id'>
+        { __typename?: 'AcceptedFriendsResponse' }
+        & { profile: (
+          { __typename?: 'Profile' }
+          & Pick<Profile, 'id'>
+        ), friendship: (
+          { __typename?: 'Friendship' }
+          & Pick<Friendship, 'id' | 'isAccepted'>
+        ) }
       )> }
     ) }
   ) }
@@ -1132,6 +1275,118 @@ export function useLikeCommentMutation(baseOptions?: Apollo.MutationHookOptions<
 export type LikeCommentMutationHookResult = ReturnType<typeof useLikeCommentMutation>;
 export type LikeCommentMutationResult = Apollo.MutationResult<LikeCommentMutation>;
 export type LikeCommentMutationOptions = Apollo.BaseMutationOptions<LikeCommentMutation, LikeCommentMutationVariables>;
+export const AcceptFriendshipDocument = gql`
+    mutation AcceptFriendship($id: ID!) {
+  acceptFriendship(id: $id) {
+    id
+    isAccepted
+  }
+}
+    `;
+export type AcceptFriendshipMutationFn = Apollo.MutationFunction<AcceptFriendshipMutation, AcceptFriendshipMutationVariables>;
+
+/**
+ * __useAcceptFriendshipMutation__
+ *
+ * To run a mutation, you first call `useAcceptFriendshipMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAcceptFriendshipMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [acceptFriendshipMutation, { data, loading, error }] = useAcceptFriendshipMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useAcceptFriendshipMutation(baseOptions?: Apollo.MutationHookOptions<AcceptFriendshipMutation, AcceptFriendshipMutationVariables>) {
+        return Apollo.useMutation<AcceptFriendshipMutation, AcceptFriendshipMutationVariables>(AcceptFriendshipDocument, baseOptions);
+      }
+export type AcceptFriendshipMutationHookResult = ReturnType<typeof useAcceptFriendshipMutation>;
+export type AcceptFriendshipMutationResult = Apollo.MutationResult<AcceptFriendshipMutation>;
+export type AcceptFriendshipMutationOptions = Apollo.BaseMutationOptions<AcceptFriendshipMutation, AcceptFriendshipMutationVariables>;
+export const CreateFriendshipDocument = gql`
+    mutation CreateFriendship($addressedToId: ID!) {
+  createFriendship(addressedToId: $addressedToId) {
+    friendship {
+      id
+      isAccepted
+    }
+    profile {
+      id
+    }
+    friendProfile {
+      id
+    }
+  }
+}
+    `;
+export type CreateFriendshipMutationFn = Apollo.MutationFunction<CreateFriendshipMutation, CreateFriendshipMutationVariables>;
+
+/**
+ * __useCreateFriendshipMutation__
+ *
+ * To run a mutation, you first call `useCreateFriendshipMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateFriendshipMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createFriendshipMutation, { data, loading, error }] = useCreateFriendshipMutation({
+ *   variables: {
+ *      addressedToId: // value for 'addressedToId'
+ *   },
+ * });
+ */
+export function useCreateFriendshipMutation(baseOptions?: Apollo.MutationHookOptions<CreateFriendshipMutation, CreateFriendshipMutationVariables>) {
+        return Apollo.useMutation<CreateFriendshipMutation, CreateFriendshipMutationVariables>(CreateFriendshipDocument, baseOptions);
+      }
+export type CreateFriendshipMutationHookResult = ReturnType<typeof useCreateFriendshipMutation>;
+export type CreateFriendshipMutationResult = Apollo.MutationResult<CreateFriendshipMutation>;
+export type CreateFriendshipMutationOptions = Apollo.BaseMutationOptions<CreateFriendshipMutation, CreateFriendshipMutationVariables>;
+export const DeleteFriendshipDocument = gql`
+    mutation DeleteFriendship($id: ID!) {
+  deleteFriendship(id: $id) {
+    friendshipId
+    profile {
+      id
+    }
+    friendProfile {
+      id
+    }
+  }
+}
+    `;
+export type DeleteFriendshipMutationFn = Apollo.MutationFunction<DeleteFriendshipMutation, DeleteFriendshipMutationVariables>;
+
+/**
+ * __useDeleteFriendshipMutation__
+ *
+ * To run a mutation, you first call `useDeleteFriendshipMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteFriendshipMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteFriendshipMutation, { data, loading, error }] = useDeleteFriendshipMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteFriendshipMutation(baseOptions?: Apollo.MutationHookOptions<DeleteFriendshipMutation, DeleteFriendshipMutationVariables>) {
+        return Apollo.useMutation<DeleteFriendshipMutation, DeleteFriendshipMutationVariables>(DeleteFriendshipDocument, baseOptions);
+      }
+export type DeleteFriendshipMutationHookResult = ReturnType<typeof useDeleteFriendshipMutation>;
+export type DeleteFriendshipMutationResult = Apollo.MutationResult<DeleteFriendshipMutation>;
+export type DeleteFriendshipMutationOptions = Apollo.BaseMutationOptions<DeleteFriendshipMutation, DeleteFriendshipMutationVariables>;
 export const CreatePostDocument = gql`
     mutation CreatePost($content: String!) {
   createPost(content: $content) {
@@ -1373,10 +1628,23 @@ export const LoginDocument = gql`
       profile {
         id
         allFriends {
-          id
+          profile {
+            id
+          }
+          friendship {
+            id
+            isAccepted
+          }
+          requestedByMe
         }
         acceptedFriends {
-          id
+          profile {
+            id
+          }
+          friendship {
+            id
+            isAccepted
+          }
         }
       }
     }
@@ -1422,10 +1690,23 @@ export const RegisterDocument = gql`
       profile {
         id
         allFriends {
-          id
+          profile {
+            id
+          }
+          friendship {
+            id
+            isAccepted
+          }
+          requestedByMe
         }
         acceptedFriends {
-          id
+          profile {
+            id
+          }
+          friendship {
+            id
+            isAccepted
+          }
         }
       }
     }
@@ -1749,11 +2030,26 @@ export const ProfileDocument = gql`
       }
     }
     acceptedFriends {
-      id
-      user {
+      profile {
         id
-        fullName
+        user {
+          id
+          fullName
+        }
       }
+      friendship {
+        id
+      }
+    }
+    allFriends {
+      profile {
+        id
+      }
+      friendship {
+        id
+        isAccepted
+      }
+      requestedByMe
     }
   }
 }
@@ -1832,10 +2128,23 @@ export const UserDocument = gql`
     profile {
       id
       allFriends {
-        id
+        profile {
+          id
+        }
+        friendship {
+          id
+          isAccepted
+        }
+        requestedByMe
       }
       acceptedFriends {
-        id
+        profile {
+          id
+        }
+        friendship {
+          id
+          isAccepted
+        }
       }
     }
   }

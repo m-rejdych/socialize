@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -14,7 +14,14 @@ import {
 import { useParams, useHistory } from 'react-router-dom';
 import { useReactiveVar } from '@apollo/client';
 
-import { useProfileQuery } from '../../generated/graphql';
+import {
+  useProfileQuery,
+  useCreateFriendshipMutation,
+  useDeleteFriendshipMutation,
+  useAcceptFriendshipMutation,
+  Friendship,
+  Profile as ProfileType,
+} from '../../generated/graphql';
 import { userVar } from 'src/graphql/reactiveVariables/user';
 import Post from '../../components/Post';
 import PostInput from '../../components/PostInput';
@@ -52,7 +59,65 @@ const Profile: React.FC = () => {
   const user = useReactiveVar(userVar);
   const [open, setOpen] = useState(false);
   const { id } = useParams<{ id: string }>();
-  const { data, loading } = useProfileQuery({ variables: { id } });
+  const { data, loading, startPolling, stopPolling } = useProfileQuery({
+    variables: { id },
+  });
+  const [createFriendship] = useCreateFriendshipMutation({
+    update(cache, { data }) {
+      if (data?.createFriendship) {
+        const { friendProfile, profile, friendship } = data.createFriendship;
+        cache.modify({
+          id: cache.identify(friendProfile),
+          fields: {
+            allFriends(existingFriends = []) {
+              return [...existingFriends, { profile, friendship }];
+            },
+          },
+        });
+      }
+    },
+  });
+  const [deleteFriendship] = useDeleteFriendshipMutation({
+    update(cache, { data }) {
+      if (data?.deleteFriendship) {
+        const { friendshipId, friendProfile } = data.deleteFriendship;
+        cache.modify({
+          id: cache.identify(friendProfile),
+          fields: {
+            allFriends(existingFriends = [], { readField }) {
+              return existingFriends.filter(
+                ({
+                  friendship,
+                }: {
+                  friendship: Friendship;
+                  profile: ProfileType;
+                }) => readField('id', friendship) !== friendshipId,
+              );
+            },
+            acceptedFriends(existingFriends = [], { readField }) {
+              return existingFriends.filter(
+                ({
+                  friendship,
+                }: {
+                  friendship: Friendship;
+                  profile: ProfileType;
+                }) => readField('id', friendship) !== friendshipId,
+              );
+            },
+          },
+        });
+      }
+    },
+  });
+  const [acceptFriendship] = useAcceptFriendshipMutation();
+
+  useEffect(() => {
+    startPolling(3000);
+
+    return () => {
+      stopPolling();
+    };
+  }, []);
 
   if (data?.profile) {
     const {
@@ -64,6 +129,7 @@ const Profile: React.FC = () => {
       country,
       city,
       relationship,
+      allFriends,
     } = data.profile;
 
     const isMe = user?.profile.id === profileId;
@@ -104,29 +170,151 @@ const Profile: React.FC = () => {
       setOpen((prev) => !prev);
     };
 
-    const renderActions = (): JSX.Element => {
-      if (user?.profile.acceptedFriends.some(({ id }) => id === profileId)) {
-        return (
-          <Button variant="contained" color="primary">
-            Friend
-          </Button>
-        );
+    const handleCreateFriendship = async (): Promise<void> => {
+      try {
+        const response = await createFriendship({
+          variables: { addressedToId: profileId },
+        });
+        if (response?.data?.createFriendship && user) {
+          const {
+            friendship: { id: friendshipId, isAccepted },
+            friendProfile: { id: friendId },
+          } = response.data.createFriendship;
+          userVar({
+            ...user,
+            profile: {
+              ...user.profile,
+              allFriends: [
+                ...user.profile.allFriends,
+                {
+                  profile: { id: friendId },
+                  friendship: { id: friendshipId, isAccepted },
+                  requestedByMe: true,
+                },
+              ],
+            },
+          });
+        }
+      } catch (error) {
+        console.log(error);
       }
+    };
 
-      if (
-        user?.profile.allFriends.some(({ id }) => id === profileId) &&
-        !user?.profile.acceptedFriends.some(({ id }) => id === profileId)
-      ) {
+    const handleDeleteFriendship = async (id: string): Promise<void> => {
+      try {
+        await deleteFriendship({ variables: { id } });
+        if (user) {
+          userVar({
+            ...user,
+            profile: {
+              ...user?.profile,
+              allFriends: user?.profile.allFriends.filter(
+                ({ friendship: { id: friendshipId } }) => friendshipId !== id,
+              ),
+              acceptedFriends: user?.profile.acceptedFriends.filter(
+                ({ friendship: { id: friendshipId } }) => friendshipId !== id,
+              ),
+            },
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const handleAcceptFriendship = async (id: string): Promise<void> => {
+      try {
+        await acceptFriendship({ variables: { id } });
+        if (user) {
+          userVar({
+            ...user,
+            profile: {
+              ...user.profile,
+              allFriends: user.profile.allFriends.map((friend) =>
+                friend.friendship.id === id
+                  ? {
+                      ...friend,
+                      friendship: { ...friend.friendship, isAccepted: true },
+                    }
+                  : friend,
+              ),
+            },
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const renderActions = (): JSX.Element => {
+      const friend = allFriends.find(
+        ({ profile: { id } }) => id === user?.profile.id,
+      );
+
+      if (friend) {
+        const {
+          requestedByMe,
+          friendship: { id: friendshipId, isAccepted },
+        } = friend;
+
+        if (!isAccepted) {
+          if (requestedByMe) {
+            return (
+              <>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.marginRight}
+                  onClick={(): Promise<void> =>
+                    handleAcceptFriendship(friendshipId)
+                  }
+                >
+                  Accept request
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={(): Promise<void> =>
+                    handleDeleteFriendship(friendshipId)
+                  }
+                >
+                  Decline request
+                </Button>
+              </>
+            );
+          }
+
+          return (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={(): Promise<void> =>
+                handleDeleteFriendship(friendshipId)
+              }
+            >
+              Cancel request
+            </Button>
+          );
+        }
+
         return (
-          <Button variant="contained" color="primary">
-            Invited
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={(): Promise<void> => handleDeleteFriendship(friendshipId)}
+          >
+            Delete friend
           </Button>
         );
       }
 
       return (
-        <Button variant="contained" color="primary">
-          Invite
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleCreateFriendship}
+        >
+          Invite friend
         </Button>
       );
     };
@@ -188,22 +376,29 @@ const Profile: React.FC = () => {
                     Friends
                   </Typography>
                   <Box display="flex">
-                    {acceptedFriends.map(({ id, user: { fullName } }) => (
-                      <Box
-                        key={id}
-                        display="flex"
-                        flexDirection="column"
-                        alignItems="center"
-                        mr={2}
-                        className={classes.cursorPointer}
-                        onClick={(): void => goToProfile(id)}
-                      >
-                        <Avatar className={classes.marginBottom} />
-                        <Typography className={classes.fontBold}>
-                          {fullName}
-                        </Typography>
-                      </Box>
-                    ))}
+                    {acceptedFriends.map(
+                      ({
+                        profile: {
+                          id,
+                          user: { fullName },
+                        },
+                      }) => (
+                        <Box
+                          key={id}
+                          display="flex"
+                          flexDirection="column"
+                          alignItems="center"
+                          mr={2}
+                          className={classes.cursorPointer}
+                          onClick={(): void => goToProfile(id)}
+                        >
+                          <Avatar className={classes.marginBottom} />
+                          <Typography className={classes.fontBold}>
+                            {fullName}
+                          </Typography>
+                        </Box>
+                      ),
+                    )}
                   </Box>
                 </Box>
               ) : null}

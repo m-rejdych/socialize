@@ -12,7 +12,7 @@ import { useUserLazyQuery } from './generated/graphql';
 
 const App = () => {
   const user = useReactiveVar(userVar);
-  const [getUser, { data, loading }] = useUserLazyQuery();
+  const [getUser, { data, loading, error }] = useUserLazyQuery();
 
   useEffect(() => {
     const expiresIn = localStorage.getItem('expiresIn');
@@ -26,6 +26,7 @@ const App = () => {
   if (!user && data?.user) {
     userVar(data.user);
   }
+  console.log(user, data, error);
 
   const routes = user ? (
     <>

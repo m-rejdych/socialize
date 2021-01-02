@@ -17,6 +17,8 @@ import ProfileComments from './comment/query/profileComments';
 import Profile from './profile/query/profile';
 import Profiles from './profile/query/profiles';
 import Friends from './profile/query/friends';
+import AllFriends from './profile/fieldResolver/allFriends';
+import AcceptedFriends from './profile/fieldResolver/acceptedFriends';
 import Feed from './profile/query/feed';
 import UpdateProfile from './profile/mutation/UpdateProfile';
 import CreateFriendship from './friendship/mutation/createFriendship';
@@ -54,6 +56,8 @@ const resolvers = [
   Profile,
   Profiles,
   Friends,
+  AllFriends,
+  AcceptedFriends,
   Feed,
   UpdateProfile,
   CreateFriendship,

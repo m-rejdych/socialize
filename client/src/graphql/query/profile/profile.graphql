@@ -82,11 +82,26 @@ query Profile($id: ID) {
       }
     }
     acceptedFriends {
-      id
-      user {
+      profile {
         id
-        fullName
+        user {
+          id
+          fullName
+        }
       }
+      friendship {
+        id
+      }
+    }
+    allFriends {
+      profile {
+        id
+      }
+      friendship {
+        id
+        isAccepted
+      }
+      requestedByMe
     }
   }
 }

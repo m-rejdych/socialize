@@ -11,10 +11,23 @@ mutation Login($data: LoginInput!) {
       profile {
         id
         allFriends {
-          id
+          profile {
+            id
+          }
+          friendship {
+            id
+            isAccepted
+          }
+          requestedByMe
         }
         acceptedFriends {
-          id
+          profile {
+            id
+          }
+          friendship {
+            id
+            isAccepted
+          }
         }
       }
     }

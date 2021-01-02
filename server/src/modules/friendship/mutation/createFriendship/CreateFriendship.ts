@@ -3,15 +3,16 @@ import { Resolver, Mutation, Arg, Authorized, ID, Ctx } from 'type-graphql';
 import Friendship from '../../../../entity/Friendship';
 import Profile from '../../../../entity/Profile';
 import Context from '../../../../types/Context';
+import CreateFriendshipResponse from './CreateFriendshipResponse';
 
 @Resolver()
 class CreateFriendship {
   @Authorized()
-  @Mutation(() => Friendship)
+  @Mutation(() => CreateFriendshipResponse)
   async createFriendship(
     @Arg('addressedToId', () => ID) addressedToId: string,
     @Ctx() ctx: Context,
-  ): Promise<Friendship> {
+  ): Promise<CreateFriendshipResponse> {
     const { profileId } = ctx;
 
     const requestedBy = await Profile.findOne(profileId, {
@@ -40,7 +41,11 @@ class CreateFriendship {
     });
     await friendship.save();
 
-    return friendship;
+    return {
+      friendship,
+      profile: requestedBy,
+      friendProfile: addressedTo,
+    };
   }
 }
 
