@@ -9,6 +9,12 @@ query User($id: ID) {
     isAdmin
     profile {
       id
+      allFriends {
+        id
+      }
+      acceptedFriends {
+        id
+      }
     }
   }
 }

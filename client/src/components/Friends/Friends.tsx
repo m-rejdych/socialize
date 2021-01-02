@@ -27,7 +27,7 @@ const Friends: React.FC = () => {
   const classes = useStyles();
 
   if (data?.profile) {
-    const { friends } = data.profile;
+    const { acceptedFriends } = data.profile;
 
     const handleSelectFriend = (id: string): void => {
       setSelectedFriend(id);
@@ -35,7 +35,7 @@ const Friends: React.FC = () => {
 
     return (
       <List title="Friends">
-        {friends.map(({ id, user: { fullName } }) => (
+        {acceptedFriends.map(({ id, user: { fullName } }) => (
           <ListItem
             key={id}
             button

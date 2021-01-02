@@ -116,7 +116,8 @@ export type Profile = {
   dislikedComments?: Maybe<Array<Comment>>;
   chats?: Maybe<Array<Chat>>;
   messages?: Maybe<Array<Message>>;
-  friends: Array<Profile>;
+  acceptedFriends: Array<Profile>;
+  allFriends: Array<Profile>;
 };
 
 export type Post = {
@@ -688,6 +689,13 @@ export type LoginMutation = (
       & { profile: (
         { __typename?: 'Profile' }
         & Pick<Profile, 'id'>
+        & { allFriends: Array<(
+          { __typename?: 'Profile' }
+          & Pick<Profile, 'id'>
+        )>, acceptedFriends: Array<(
+          { __typename?: 'Profile' }
+          & Pick<Profile, 'id'>
+        )> }
       ) }
     ) }
   ) }
@@ -709,6 +717,13 @@ export type RegisterMutation = (
       & { profile: (
         { __typename?: 'Profile' }
         & Pick<Profile, 'id'>
+        & { allFriends: Array<(
+          { __typename?: 'Profile' }
+          & Pick<Profile, 'id'>
+        )>, acceptedFriends: Array<(
+          { __typename?: 'Profile' }
+          & Pick<Profile, 'id'>
+        )> }
       ) }
     ) }
   ) }
@@ -922,7 +937,7 @@ export type ProfileQuery = (
         { __typename?: 'Profile' }
         & Pick<Profile, 'id'>
       ) }
-    )>>, friends: Array<(
+    )>>, acceptedFriends: Array<(
       { __typename?: 'Profile' }
       & Pick<Profile, 'id'>
       & { user: (
@@ -961,6 +976,13 @@ export type UserQuery = (
     & { profile: (
       { __typename?: 'Profile' }
       & Pick<Profile, 'id'>
+      & { allFriends: Array<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+      )>, acceptedFriends: Array<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+      )> }
     ) }
   ) }
 );
@@ -1350,6 +1372,12 @@ export const LoginDocument = gql`
       userName
       profile {
         id
+        allFriends {
+          id
+        }
+        acceptedFriends {
+          id
+        }
       }
     }
   }
@@ -1393,6 +1421,12 @@ export const RegisterDocument = gql`
       userName
       profile {
         id
+        allFriends {
+          id
+        }
+        acceptedFriends {
+          id
+        }
       }
     }
   }
@@ -1714,7 +1748,7 @@ export const ProfileDocument = gql`
         id
       }
     }
-    friends {
+    acceptedFriends {
       id
       user {
         id
@@ -1797,6 +1831,12 @@ export const UserDocument = gql`
     isAdmin
     profile {
       id
+      allFriends {
+        id
+      }
+      acceptedFriends {
+        id
+      }
     }
   }
 }

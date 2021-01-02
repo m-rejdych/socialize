@@ -81,7 +81,7 @@ query Profile($id: ID) {
         id
       }
     }
-    friends {
+    acceptedFriends {
       id
       user {
         id

@@ -114,13 +114,26 @@ class Profile extends BaseEntity {
   readMessages: Message[];
 
   @Field(() => [Profile])
-  friends(@Root() root: Profile): Profile[] {
+  acceptedFriends(@Root() root: Profile): Profile[] {
     const requestedFriendships = root.requestedFriendships
       .filter(({ isAccepted }) => isAccepted)
       .map(({ addressedTo }) => addressedTo);
     const receivedFriendships = root.receivedFriendships
       .filter(({ isAccepted }) => isAccepted)
       .map(({ requestedBy }) => requestedBy);
+    return [...requestedFriendships, ...receivedFriendships].sort((a, b) =>
+      a.user.fullName > b.user.fullName ? -1 : 1,
+    );
+  }
+
+  @Field(() => [Profile])
+  allFriends(@Root() root: Profile): Profile[] {
+    const requestedFriendships = root.requestedFriendships.map(
+      ({ addressedTo }) => addressedTo,
+    );
+    const receivedFriendships = root.receivedFriendships.map(
+      ({ requestedBy }) => requestedBy,
+    );
     return [...requestedFriendships, ...receivedFriendships].sort((a, b) =>
       a.user.fullName > b.user.fullName ? -1 : 1,
     );

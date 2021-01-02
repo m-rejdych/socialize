@@ -1,5 +1,9 @@
 import { makeVar } from '@apollo/client';
 
+interface Profile {
+  id: string;
+}
+
 interface User {
   id: string;
   email: string;
@@ -7,7 +11,7 @@ interface User {
   lastName: string;
   fullName: string;
   userName: string;
-  profile: { id: string };
+  profile: { id: string; allFriends: Profile[]; acceptedFriends: Profile[] };
 }
 
 export const userVar = makeVar<User | null>(null);

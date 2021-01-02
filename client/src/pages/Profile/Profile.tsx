@@ -59,7 +59,7 @@ const Profile: React.FC = () => {
       id: profileId,
       user: { firstName, fullName, email },
       posts,
-      friends,
+      acceptedFriends,
       phoneNumber,
       country,
       city,
@@ -104,15 +104,47 @@ const Profile: React.FC = () => {
       setOpen((prev) => !prev);
     };
 
+    const renderActions = (): JSX.Element => {
+      if (user?.profile.acceptedFriends.some(({ id }) => id === profileId)) {
+        return (
+          <Button variant="contained" color="primary">
+            Friend
+          </Button>
+        );
+      }
+
+      if (
+        user?.profile.allFriends.some(({ id }) => id === profileId) &&
+        !user?.profile.acceptedFriends.some(({ id }) => id === profileId)
+      ) {
+        return (
+          <Button variant="contained" color="primary">
+            Invited
+          </Button>
+        );
+      }
+
+      return (
+        <Button variant="contained" color="primary">
+          Invite
+        </Button>
+      );
+    };
+
     return (
       <Container maxWidth="md">
         <Box minHeight="100vh" py={3}>
-          <Box mb={5} display="flex" flexDirection="column" alignItems="center">
+          <Box mb={2} display="flex" flexDirection="column" alignItems="center">
             <Avatar className={classes.avatar} />
             <Typography variant="h4" className={classes.fontBold}>
               {fullName}
             </Typography>
           </Box>
+          {user?.profile.id === profileId || (
+            <Box display="flex" justifyContent="center" pb={3}>
+              {renderActions()}
+            </Box>
+          )}
           <Grid container spacing={3} justify="center">
             <Grid item xs={5}>
               <Box display="flex" justifyContent="space-between">
@@ -146,7 +178,7 @@ const Profile: React.FC = () => {
                 ))}
               </Box>
               <Divider />
-              {friends ? (
+              {acceptedFriends ? (
                 <Box mt={4}>
                   <Typography
                     variant="h5"
@@ -156,7 +188,7 @@ const Profile: React.FC = () => {
                     Friends
                   </Typography>
                   <Box display="flex">
-                    {friends.map(({ id, user: { fullName } }) => (
+                    {acceptedFriends.map(({ id, user: { fullName } }) => (
                       <Box
                         key={id}
                         display="flex"

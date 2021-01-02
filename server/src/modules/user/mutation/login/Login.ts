@@ -14,7 +14,20 @@ class Login {
   async login(
     @Arg('data') { email, password }: LoginInput,
   ): Promise<LoginResponse> {
-    const user = await User.findOne({ email }, { relations: ['profile'] });
+    const user = await User.findOne(
+      { email },
+      {
+        relations: [
+          'profile',
+          'profile.requestedFriendships',
+          'profile.requestedFriendships.addressedTo',
+          'profile.requestedFriendships.addressedTo.user',
+          'profile.receivedFriendships',
+          'profile.receivedFriendships.requestedBy',
+          'profile.receivedFriendships.requestedBy.user',
+        ],
+      },
+    );
     if (!user) throw new Error('Wrong email or password!');
 
     const isValid = await compare(password, user.password);
@@ -22,7 +35,9 @@ class Login {
       throw new Error('Wrong email or password!');
     }
 
-    const profile = await Profile.findOne({ where: { user: user.id } });
+    const profile = await Profile.findOne({
+      where: { user: user.id },
+    });
     if (!profile) throw new Error('Profile not found!');
 
     const token = sign(

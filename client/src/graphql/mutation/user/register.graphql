@@ -10,6 +10,12 @@ mutation Register($data: RegisterInput!) {
       userName
       profile {
         id
+        allFriends {
+          id
+        }
+        acceptedFriends {
+          id
+        }
       }
     }
   }
