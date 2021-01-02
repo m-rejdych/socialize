@@ -21,6 +21,7 @@ import Feed from './profile/query/feed';
 import UpdateProfile from './profile/mutation/UpdateProfile';
 import CreateFriendship from './friendship/mutation/createFriendship';
 import AcceptFriendship from './friendship/mutation/acceptFriendship';
+import DeleteFriendship from './friendship/mutation/deleteFriendship';
 import CreateChat from './chat/mutation/createChat';
 import DeleteChat from './chat/mutation/deleteChat';
 import UpdateChatName from './chat/mutation/updateChatName';
@@ -57,6 +58,7 @@ const resolvers = [
   UpdateProfile,
   CreateFriendship,
   AcceptFriendship,
+  DeleteFriendship,
   CreateChat,
   DeleteChat,
   UpdateChatName,
