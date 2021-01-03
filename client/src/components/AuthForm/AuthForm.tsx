@@ -115,28 +115,32 @@ const AuthForm: React.FC = () => {
   const handleSubmit = async (
     values: LoginInput | RegisterInput,
   ): Promise<void> => {
-    if (isLoggingIn) {
-      const response = await login({
-        variables: { data: values as LoginInput },
-      });
-      if (response.data) {
-        const { user, token } = response.data.login;
-        localStorage.setItem('token', token);
-        localStorage.setItem('expiresIn', (Date.now() + 3600000).toString());
-        userVar(user);
-        console.log(user, token);
+    try {
+      if (isLoggingIn) {
+        const response = await login({
+          variables: { data: values as LoginInput },
+        });
+        if (response.data) {
+          const { user, token } = response.data.login;
+          localStorage.setItem('token', token);
+          localStorage.setItem('expiresIn', (Date.now() + 3600000).toString());
+          userVar(user);
+          console.log(user, token);
+        }
+      } else {
+        const response = await register({
+          variables: { data: values as RegisterInput },
+        });
+        if (response.data) {
+          const { user, token } = response.data.register;
+          localStorage.setItem('token', token);
+          localStorage.setItem('expiresIn', (Date.now() + 3600000).toString());
+          userVar(user);
+          console.log(user, token);
+        }
       }
-    } else {
-      const response = await register({
-        variables: { data: values as RegisterInput },
-      });
-      if (response.data) {
-        const { user, token } = response.data.register;
-        localStorage.setItem('token', token);
-        localStorage.setItem('expiresIn', (Date.now() + 3600000).toString());
-        userVar(user);
-        console.log(user, token);
-      }
+    } catch (error) {
+      console.log(error);
     }
   };
 

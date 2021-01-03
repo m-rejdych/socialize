@@ -10,25 +10,6 @@ mutation Login($data: LoginInput!) {
       userName
       profile {
         id
-        allFriends {
-          profile {
-            id
-          }
-          friendship {
-            id
-            isAccepted
-          }
-          requestedByMe
-        }
-        acceptedFriends {
-          profile {
-            id
-          }
-          friendship {
-            id
-            isAccepted
-          }
-        }
       }
     }
   }

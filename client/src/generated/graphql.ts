@@ -151,6 +151,7 @@ export type Chat = {
   __typename?: 'Chat';
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
+  type: Scalars['String'];
   members: Array<Profile>;
   messages?: Maybe<Array<Message>>;
 };
@@ -278,7 +279,7 @@ export type MutationDeleteFriendshipArgs = {
 
 
 export type MutationCreateChatArgs = {
-  ids: Array<Scalars['ID']>;
+  data: CreateChatInput;
 };
 
 
@@ -408,6 +409,11 @@ export type CreateChatResponse = {
   members: Array<Profile>;
 };
 
+export type CreateChatInput = {
+  ids: Array<Scalars['ID']>;
+  type: Scalars['String'];
+};
+
 export type DeleteChatResponse = {
   __typename?: 'DeleteChatResponse';
   chatId: Scalars['String'];
@@ -469,6 +475,25 @@ export type NewMessageResponse = {
   chat: Chat;
   message: Message;
 };
+
+export type CreateChatMutationVariables = Exact<{
+  data: CreateChatInput;
+}>;
+
+
+export type CreateChatMutation = (
+  { __typename?: 'Mutation' }
+  & { createChat: (
+    { __typename?: 'CreateChatResponse' }
+    & { chat: (
+      { __typename?: 'Chat' }
+      & Pick<Chat, 'id'>
+    ), members: Array<(
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id'>
+    )> }
+  ) }
+);
 
 export type CreateCommentMutationVariables = Exact<{
   data: CreateCommentInput;
@@ -777,26 +802,6 @@ export type LoginMutation = (
       & { profile: (
         { __typename?: 'Profile' }
         & Pick<Profile, 'id'>
-        & { allFriends: Array<(
-          { __typename?: 'AllFriendsResponse' }
-          & Pick<AllFriendsResponse, 'requestedByMe'>
-          & { profile: (
-            { __typename?: 'Profile' }
-            & Pick<Profile, 'id'>
-          ), friendship: (
-            { __typename?: 'Friendship' }
-            & Pick<Friendship, 'id' | 'isAccepted'>
-          ) }
-        )>, acceptedFriends: Array<(
-          { __typename?: 'AcceptedFriendsResponse' }
-          & { profile: (
-            { __typename?: 'Profile' }
-            & Pick<Profile, 'id'>
-          ), friendship: (
-            { __typename?: 'Friendship' }
-            & Pick<Friendship, 'id' | 'isAccepted'>
-          ) }
-        )> }
       ) }
     ) }
   ) }
@@ -818,26 +823,6 @@ export type RegisterMutation = (
       & { profile: (
         { __typename?: 'Profile' }
         & Pick<Profile, 'id'>
-        & { allFriends: Array<(
-          { __typename?: 'AllFriendsResponse' }
-          & Pick<AllFriendsResponse, 'requestedByMe'>
-          & { profile: (
-            { __typename?: 'Profile' }
-            & Pick<Profile, 'id'>
-          ), friendship: (
-            { __typename?: 'Friendship' }
-            & Pick<Friendship, 'id' | 'isAccepted'>
-          ) }
-        )>, acceptedFriends: Array<(
-          { __typename?: 'AcceptedFriendsResponse' }
-          & { profile: (
-            { __typename?: 'Profile' }
-            & Pick<Profile, 'id'>
-          ), friendship: (
-            { __typename?: 'Friendship' }
-            & Pick<Friendship, 'id' | 'isAccepted'>
-          ) }
-        )> }
       ) }
     ) }
   ) }
@@ -1074,7 +1059,14 @@ export type ProfileQuery = (
         { __typename?: 'Friendship' }
         & Pick<Friendship, 'id' | 'isAccepted'>
       ) }
-    )> }
+    )>, chats?: Maybe<Array<(
+      { __typename?: 'Chat' }
+      & Pick<Chat, 'id' | 'type'>
+      & { members: Array<(
+        { __typename?: 'Profile' }
+        & Pick<Profile, 'id'>
+      )> }
+    )>> }
   ) }
 );
 
@@ -1106,31 +1098,48 @@ export type UserQuery = (
     & { profile: (
       { __typename?: 'Profile' }
       & Pick<Profile, 'id'>
-      & { allFriends: Array<(
-        { __typename?: 'AllFriendsResponse' }
-        & Pick<AllFriendsResponse, 'requestedByMe'>
-        & { profile: (
-          { __typename?: 'Profile' }
-          & Pick<Profile, 'id'>
-        ), friendship: (
-          { __typename?: 'Friendship' }
-          & Pick<Friendship, 'id' | 'isAccepted'>
-        ) }
-      )>, acceptedFriends: Array<(
-        { __typename?: 'AcceptedFriendsResponse' }
-        & { profile: (
-          { __typename?: 'Profile' }
-          & Pick<Profile, 'id'>
-        ), friendship: (
-          { __typename?: 'Friendship' }
-          & Pick<Friendship, 'id' | 'isAccepted'>
-        ) }
-      )> }
     ) }
   ) }
 );
 
 
+export const CreateChatDocument = gql`
+    mutation CreateChat($data: CreateChatInput!) {
+  createChat(data: $data) {
+    chat {
+      id
+    }
+    members {
+      id
+    }
+  }
+}
+    `;
+export type CreateChatMutationFn = Apollo.MutationFunction<CreateChatMutation, CreateChatMutationVariables>;
+
+/**
+ * __useCreateChatMutation__
+ *
+ * To run a mutation, you first call `useCreateChatMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateChatMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createChatMutation, { data, loading, error }] = useCreateChatMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateChatMutation(baseOptions?: Apollo.MutationHookOptions<CreateChatMutation, CreateChatMutationVariables>) {
+        return Apollo.useMutation<CreateChatMutation, CreateChatMutationVariables>(CreateChatDocument, baseOptions);
+      }
+export type CreateChatMutationHookResult = ReturnType<typeof useCreateChatMutation>;
+export type CreateChatMutationResult = Apollo.MutationResult<CreateChatMutation>;
+export type CreateChatMutationOptions = Apollo.BaseMutationOptions<CreateChatMutation, CreateChatMutationVariables>;
 export const CreateCommentDocument = gql`
     mutation CreateComment($data: CreateCommentInput!) {
   createComment(data: $data) {
@@ -1627,25 +1636,6 @@ export const LoginDocument = gql`
       userName
       profile {
         id
-        allFriends {
-          profile {
-            id
-          }
-          friendship {
-            id
-            isAccepted
-          }
-          requestedByMe
-        }
-        acceptedFriends {
-          profile {
-            id
-          }
-          friendship {
-            id
-            isAccepted
-          }
-        }
       }
     }
   }
@@ -1689,25 +1679,6 @@ export const RegisterDocument = gql`
       userName
       profile {
         id
-        allFriends {
-          profile {
-            id
-          }
-          friendship {
-            id
-            isAccepted
-          }
-          requestedByMe
-        }
-        acceptedFriends {
-          profile {
-            id
-          }
-          friendship {
-            id
-            isAccepted
-          }
-        }
       }
     }
   }
@@ -2051,6 +2022,13 @@ export const ProfileDocument = gql`
       }
       requestedByMe
     }
+    chats {
+      id
+      type
+      members {
+        id
+      }
+    }
   }
 }
     `;
@@ -2127,25 +2105,6 @@ export const UserDocument = gql`
     isAdmin
     profile {
       id
-      allFriends {
-        profile {
-          id
-        }
-        friendship {
-          id
-          isAccepted
-        }
-        requestedByMe
-      }
-      acceptedFriends {
-        profile {
-          id
-        }
-        friendship {
-          id
-          isAccepted
-        }
-      }
     }
   }
 }

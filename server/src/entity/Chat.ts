@@ -23,6 +23,10 @@ class Chat extends BaseEntity {
   @Field({ nullable: true })
   name: string;
 
+  @Column()
+  @Field()
+  type: 'friend' | 'group';
+
   @ManyToMany(() => Profile, (profile) => profile.chats, {
     cascade: true,
     onDelete: 'CASCADE',

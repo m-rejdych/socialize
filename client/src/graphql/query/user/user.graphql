@@ -9,25 +9,25 @@ query User($id: ID) {
     isAdmin
     profile {
       id
-      allFriends {
-        profile {
-          id
-        }
-        friendship {
-          id
-          isAccepted
-        }
-        requestedByMe
-      }
-      acceptedFriends {
-        profile {
-          id
-        }
-        friendship {
-          id
-          isAccepted
-        }
-      }
+      # allFriends {
+      #   profile {
+      #     id
+      #   }
+      #   friendship {
+      #     id
+      #     isAccepted
+      #   }
+      #   requestedByMe
+      # }
+      # acceptedFriends {
+      #   profile {
+      #     id
+      #   }
+      #   friendship {
+      #     id
+      #     isAccepted
+      #   }
+      # }
     }
   }
 }

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   Paper,
   Avatar,
@@ -24,7 +25,15 @@ const useStyles = makeStyles((theme) => ({
 
 const Feed: React.FC = () => {
   const classes = useStyles();
-  const { data: feedData, loading } = useFeedQuery();
+  const { data: feedData, loading, startPolling, stopPolling } = useFeedQuery();
+
+  useEffect(() => {
+    startPolling(10000);
+
+    return () => {
+      stopPolling();
+    };
+  }, []);
 
   console.log('feed rerender');
   return (

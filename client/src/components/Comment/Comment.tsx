@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { useHistory } from 'react-router-dom';
 import { formatDistance } from 'date-fns';
 import { Box, Typography, Avatar, makeStyles } from '@material-ui/core';
 import { ArrowDropDown, ArrowDropUp } from '@material-ui/icons';
@@ -53,6 +54,7 @@ const Comment: React.FC<Props> = ({
   dislikedBy,
 }) => {
   const classes = useStyles();
+  const history = useHistory();
   const user = useReactiveVar(userVar);
   const [likeComment] = useLikeCommentMutation();
 
@@ -64,13 +66,22 @@ const Comment: React.FC<Props> = ({
     await likeComment({ variables: { data: { id, isLiked } } });
   };
 
+  const goToProfile = (): void => {
+    history.push(`/profile/${profileId}`);
+  };
+
   return (
     <Box display="flex" alignItems="flex-start" mt={2}>
-      <Avatar />
+      <Avatar onClick={goToProfile} className={classes.cursorPointer} />
       <Box flexGrow={1} ml={2}>
         <Box display="flex">
           <Typography
-            className={classNames(classes.fontBold, classes.flexGrow)}
+            className={classNames(
+              classes.fontBold,
+              classes.flexGrow,
+              classes.cursorPointer,
+            )}
+            onClick={goToProfile}
           >
             {fullName}
           </Typography>

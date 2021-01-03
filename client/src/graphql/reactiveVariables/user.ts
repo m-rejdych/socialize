@@ -4,20 +4,6 @@ interface Profile {
   id: string;
 }
 
-interface Friendship {
-  id: string;
-  isAccepted: boolean;
-}
-
-interface AcceptedFriendship {
-  profile: Profile;
-  friendship: Friendship;
-}
-
-interface AllFriendship extends AcceptedFriendship {
-  requestedByMe: boolean;
-}
-
 interface User {
   id: string;
   email: string;
@@ -25,11 +11,7 @@ interface User {
   lastName: string;
   fullName: string;
   userName: string;
-  profile: {
-    id: string;
-    allFriends: AllFriendship[];
-    acceptedFriends: AcceptedFriendship[];
-  };
+  profile: Profile;
 }
 
 export const userVar = makeVar<User | null>(null);

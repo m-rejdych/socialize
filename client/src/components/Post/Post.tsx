@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import classNames from 'classnames';
+import { useHistory } from 'react-router-dom';
 import { format } from 'date-fns';
 import {
   Card,
@@ -116,6 +117,7 @@ const Post: React.FC<Props> = ({
   const [value, setValue] = useState('');
   const classes = useStyles();
   const user = useReactiveVar(userVar);
+  const history = useHistory();
   const [likePost] = useLikePostMutation();
   const [createComment] = useCreateCommentMutation({
     update(cache, { data }) {
@@ -157,6 +159,10 @@ const Post: React.FC<Props> = ({
     if (e.key === 'Enter' && !e.shiftKey) handleSubmit(e);
   };
 
+  const goToProfile = (): void => {
+    history.push(`/profile/${profileId}`);
+  };
+
   const handleSubmit = async (
     e:
       | React.MouseEvent<HTMLButtonElement>
@@ -184,7 +190,9 @@ const Post: React.FC<Props> = ({
   return (
     <Card elevation={3} className={classes.card}>
       <CardHeader
-        avatar={<Avatar />}
+        avatar={
+          <Avatar onClick={goToProfile} className={classes.cursorPointer} />
+        }
         action={
           isMe ? (
             <Settings
@@ -197,7 +205,12 @@ const Post: React.FC<Props> = ({
         }
         title={
           <Box>
-            <Typography className={classes.fontBold}>{fullName}</Typography>
+            <Typography
+              className={classNames(classes.fontBold, classes.cursorPointer)}
+              onClick={goToProfile}
+            >
+              {fullName}
+            </Typography>
             <Typography variant="caption" color="textSecondary">
               {format(new Date(createdAt), 'MMMM do')}
             </Typography>

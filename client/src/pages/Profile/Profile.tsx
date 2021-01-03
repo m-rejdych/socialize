@@ -19,6 +19,7 @@ import {
   useCreateFriendshipMutation,
   useDeleteFriendshipMutation,
   useAcceptFriendshipMutation,
+  useCreateChatMutation,
   Friendship,
   Profile as ProfileType,
 } from '../../generated/graphql';
@@ -62,6 +63,7 @@ const Profile: React.FC = () => {
   const { data, loading, startPolling, stopPolling } = useProfileQuery({
     variables: { id },
   });
+  const [createChat] = useCreateChatMutation();
   const [createFriendship] = useCreateFriendshipMutation({
     update(cache, { data }) {
       if (data?.createFriendship) {
@@ -130,6 +132,7 @@ const Profile: React.FC = () => {
       city,
       relationship,
       allFriends,
+      chats,
     } = data.profile;
 
     const isMe = user?.profile.id === profileId;
@@ -172,29 +175,9 @@ const Profile: React.FC = () => {
 
     const handleCreateFriendship = async (): Promise<void> => {
       try {
-        const response = await createFriendship({
+        await createFriendship({
           variables: { addressedToId: profileId },
         });
-        if (response?.data?.createFriendship && user) {
-          const {
-            friendship: { id: friendshipId, isAccepted },
-            friendProfile: { id: friendId },
-          } = response.data.createFriendship;
-          userVar({
-            ...user,
-            profile: {
-              ...user.profile,
-              allFriends: [
-                ...user.profile.allFriends,
-                {
-                  profile: { id: friendId },
-                  friendship: { id: friendshipId, isAccepted },
-                  requestedByMe: true,
-                },
-              ],
-            },
-          });
-        }
       } catch (error) {
         console.log(error);
       }
@@ -203,20 +186,6 @@ const Profile: React.FC = () => {
     const handleDeleteFriendship = async (id: string): Promise<void> => {
       try {
         await deleteFriendship({ variables: { id } });
-        if (user) {
-          userVar({
-            ...user,
-            profile: {
-              ...user?.profile,
-              allFriends: user?.profile.allFriends.filter(
-                ({ friendship: { id: friendshipId } }) => friendshipId !== id,
-              ),
-              acceptedFriends: user?.profile.acceptedFriends.filter(
-                ({ friendship: { id: friendshipId } }) => friendshipId !== id,
-              ),
-            },
-          });
-        }
       } catch (error) {
         console.log(error);
       }
@@ -225,19 +194,21 @@ const Profile: React.FC = () => {
     const handleAcceptFriendship = async (id: string): Promise<void> => {
       try {
         await acceptFriendship({ variables: { id } });
-        if (user) {
-          userVar({
-            ...user,
-            profile: {
-              ...user.profile,
-              allFriends: user.profile.allFriends.map((friend) =>
-                friend.friendship.id === id
-                  ? {
-                      ...friend,
-                      friendship: { ...friend.friendship, isAccepted: true },
-                    }
-                  : friend,
-              ),
+
+        if (
+          user &&
+          !chats?.some(
+            ({ members, type }) =>
+              type === 'friend' &&
+              members.some(
+                ({ id: memberId }) => memberId === user?.profile.id,
+              ) &&
+              members.some(({ id: memberId }) => memberId === profileId),
+          )
+        ) {
+          await createChat({
+            variables: {
+              data: { ids: [user.profile.id, profileId], type: 'friend' },
             },
           });
         }

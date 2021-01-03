@@ -103,5 +103,12 @@ query Profile($id: ID) {
       }
       requestedByMe
     }
+    chats {
+      id
+      type
+      members {
+        id
+      }
+    }
   }
 }

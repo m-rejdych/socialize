@@ -8,6 +8,7 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(1),
     maxHeight: '40vh',
+    overflow: 'auto',
   },
   bgColor: {
     backgroundColor: '#FAFAFA',
